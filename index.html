@@ -1,0 +1,1611 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joule AI — Interactive Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Landing Page -->
+    <div class="landing-page" id="landingPage">
+        <div class="landing-badge-row">
+            <span class="landing-chip">RA 11552 · Lifeline aware</span>
+            <span class="landing-chip">RA 10173 · Privacy by design</span>
+        </div>
+        <div class="landing-mark">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#1A120D" stroke-width="2.4">
+                <path d="M13 2 L4 14h6l-1 8 9-12h-6z" fill="#1A120D" />
+            </svg>
+        </div>
+        <h1>Know your bill <span>before it arrives.</span></h1>
+        <p class="sub">Joule AI reads your electricity bill, learns your appliances, and predicts what you'll owe —
+            with a Lifeline-aware pricing engine built for Filipino households.</p>
+        <div class="landing-cta-row">
+            <button class="primary" id="start-demo">Start Demo</button>
+            <button class="secondary" id="learn-more">How it works</button>
+        </div>
+        <div class="landing-stat-strip">
+            <div>
+                <div class="v">4</div>
+                <div class="l">AI pipeline steps</div>
+            </div>
+            <div>
+                <div class="v">100%</div>
+                <div class="l">on-device sanitized</div>
+            </div>
+            <div>
+                <div class="v">₱0</div>
+                <div class="l">fake data on load</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="screen">
+
+        <!-- App Content -->
+        <div class="app-content" id="appContent">
+
+            <!-- ================= HOME ================= -->
+            <section class="tab-panel active" id="panel-home">
+                <div class="app-header">
+                    <span class="brand-mark">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#1A120D" stroke-width="2.4">
+                            <path d="M13 2 L4 14h6l-1 8 9-12h-6z" fill="#1A120D" />
+                        </svg>
+                    </span>
+                    <div class="brand-text">
+                        <span class="brand-name">Joule AI</span>
+                        <p class="brand-tagline">Know your power, before the bill knows it.</p>
+                    </div>
+                </div>
+
+                <div class="header-divider"></div>
+
+                <p class="account-label">Individual</p>
+
+                <div class="danger-banner" id="homeDangerBanner" style="display:none;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FF3636" stroke-width="2">
+                        <path
+                            d="M12 9v4M12 17h.01M10.3 3.9L2.5 18a1.5 1.5 0 001.3 2.2h16.4a1.5 1.5 0 001.3-2.2L13.7 3.9a1.5 1.5 0 00-2.7 0z" />
+                    </svg>
+                    <div>
+                        <p class="t">Danger Zone — Lifeline threshold nearby</p>
+                        <p class="d" id="homeDangerText"></p>
+                    </div>
+                </div>
+
+                <div class="meter-card">
+                    <p class="meter-label" id="meterLabel">Projected bill · This cycle</p>
+                    <div class="meter-readout" id="mainMeter">₱0<span class="unit">/ 0 kWh</span></div>
+                    <div class="meter-sub">
+                        <span><b id="deviceCount">0</b> <span id="deviceCountLabel">devices tracked</span></span>
+                        <span><b id="cycleDaysLabel">—</b></span>
+                    </div>
+                    <div class="trend-row" id="trendRow"></div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="v" id="statKwh">0</div>
+                        <div class="l">kWh used</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="v" id="statCo2">0<span style="font-size:10px"> kg</span></div>
+                        <div class="l">CO₂ avoided</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="v" id="statThird">—</div>
+                        <div class="l" id="statThirdLabel">vs last cycle</div>
+                    </div>
+                </div>
+
+                <div class="section-head">
+                    <h3 id="topDevicesTitle">Top consuming devices</h3>
+                    <span class="link" data-goto="appliances">View all</span>
+                </div>
+                <div id="topDevicesList">
+                    <p class="empty-state">No devices tracked yet. Add your appliances to see your top consumers here.
+                    </p>
+                </div>
+
+                <div class="premium-card">
+                    <span class="premium-badge">PREMIUM</span>
+                    <h4 id="premiumHomeTitle">Weekly Bill Forecast</h4>
+                    <p id="premiumHomeText">Mid-month check-in on whether you're on track to overspend — before the bill
+                        arrives.</p>
+                </div>
+            </section>
+
+            <!-- ================= SCAN ================= -->
+            <section class="tab-panel" id="panel-scan">
+                <div class="scan-view active" id="scan-idle">
+                    <p class="screen-title">Scan Bill</p>
+                    <div class="dropzone">
+                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#8A8371" stroke-width="1.6">
+                            <rect x="4" y="3" width="16" height="18" rx="2" />
+                            <path d="M8 8h8M8 12h8M8 16h5" />
+                        </svg>
+                        <p class="t">Upload or photograph your bill</p>
+                        <p class="d">Processed in-memory · nothing but sanitized figures reach the database</p>
+                        <button class="btn btn-primary" id="uploadBillBtn">Upload or take a photo</button>
+                        <button class="btn btn-ghost" id="sampleBillBtn" style="margin-top:8px;">Try a sample bill instead</button>
+                        <input type="file" id="billFileInput" accept="image/*" capture="environment" style="display:none">
+                    </div>
+                    <div class="section-head">
+                        <h3>How the pipeline protects you</h3>
+                    </div>
+                    <div class="pipeline-step">
+                        <div class="step-dot">1</div>
+                        <div class="step-text">
+                            <div class="n">OCR extraction</div>
+                            <div class="d">Raw text pulled from the image, in-memory only</div>
+                        </div>
+                    </div>
+                    <div class="pipeline-step">
+                        <div class="step-dot">2</div>
+                        <div class="step-text">
+                            <div class="n">Keyword anchor parsing</div>
+                            <div class="d">Finds kWh, charges, amount due by label</div>
+                        </div>
+                    </div>
+                    <div class="pipeline-step">
+                        <div class="step-dot">3</div>
+                        <div class="step-text">
+                            <div class="n">Regex filtering</div>
+                            <div class="d">Discards anything that isn't a valid figure — names, TIN, address</div>
+                        </div>
+                    </div>
+                    <div class="pipeline-step">
+                        <div class="step-dot">4</div>
+                        <div class="step-text">
+                            <div class="n">Confirm &amp; edit</div>
+                            <div class="d">You review the sanitized numbers before they're saved</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="scan-view" id="scan-progress">
+                    <p class="screen-title">Scanning…</p>
+                    <div class="scan-preview" id="scanPreview">
+                        <img id="scanPreviewImg" class="scan-image" src="" alt="Bill being scanned">
+                        <div class="scan-dim"></div>
+                        <div class="scan-line"></div>
+                        <div class="scan-corner tl"></div>
+                        <div class="scan-corner tr"></div>
+                        <div class="scan-corner bl"></div>
+                        <div class="scan-corner br"></div>
+                        <div class="scan-highlight redact" id="hlName" style="top:6%;left:8%;width:50%;height:8%;"></div>
+                        <div class="scan-highlight redact" id="hlAddress" style="top:16%;left:8%;width:60%;height:8%;"></div>
+                        <div class="scan-highlight field" id="hlKwh" style="top:38%;left:8%;width:34%;height:9%;"></div>
+                        <div class="scan-highlight field" id="hlCharges" style="top:52%;left:8%;width:44%;height:9%;"></div>
+                        <div class="scan-highlight field" id="hlAmount" style="top:66%;left:8%;width:38%;height:10%;"></div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="pipeline-step">
+                            <div class="step-dot" id="scanDot1">1</div>
+                            <div class="step-text">
+                                <div class="n">OCR extraction</div>
+                                <div class="d">Reading raw text from the bill image…</div>
+                            </div>
+                        </div>
+                        <div class="pipeline-step">
+                            <div class="step-dot" id="scanDot2">2</div>
+                            <div class="step-text">
+                                <div class="n">Keyword anchor parsing</div>
+                                <div class="d">Locating kWh, charges, amount due…</div>
+                            </div>
+                        </div>
+                        <div class="pipeline-step">
+                            <div class="step-dot" id="scanDot3">3</div>
+                            <div class="step-text">
+                                <div class="n">Regex filtering</div>
+                                <div class="d">Validating figures, discarding personal data…</div>
+                            </div>
+                        </div>
+                    </div>
+                    <p style="text-align:center;font-size:11.5px;color:#8A8371;" id="scanDiscardNote">Bill image is
+                        discarded — only these validated figures are kept</p>
+                </div>
+
+                <div class="scan-view" id="scan-confirm">
+                    <p class="screen-title">Confirm &amp; Edit</p>
+                    <p style="font-size:11.5px;color:#8A8371;margin:-8px 0 12px;">Step 4 of the pipeline — nothing has
+                        been
+                        extracted for you yet, since this demo has no live OCR. Type in your bill's actual figures
+                        below.
+                    </p>
+                    <div class="field-row"><label>kWh Consumed</label><input id="fieldKwh" placeholder="0"
+                            inputmode="decimal"></div>
+                    <div class="field-row"><label>Generation Charge (₱)</label><input id="fieldGeneration"
+                            placeholder="0.00" inputmode="decimal"></div>
+                    <div class="field-row"><label>Transmission (₱)</label><input id="fieldTransmission"
+                            placeholder="0.00" inputmode="decimal"></div>
+                    <div class="field-row"><label>System Loss (₱)</label><input id="fieldSystemLoss" placeholder="0.00"
+                            inputmode="decimal"></div>
+                    <div class="field-row"><label>Other Charges (₱)</label><input id="fieldOther" placeholder="0.00"
+                            inputmode="decimal"></div>
+                    <div class="field-row" style="border-color:#1A120D;"><label style="color:#1A120D;">Amount Due
+                            (₱)</label><input id="fieldAmountDue" placeholder="0.00" style="color:#1A120D;"
+                            inputmode="decimal"></div>
+                    <p style="font-size:10.5px;color:#8A8371;margin:8px 0 14px;">Account names, TIN, and service address
+                        were automatically discarded — they never left the OCR step.</p>
+                    <button class="btn btn-primary" id="confirmScanBtn">Confirm &amp; save</button>
+                    <button class="btn btn-ghost" id="rescanBtn" style="margin-top:8px;">Rescan</button>
+                </div>
+            </section>
+
+            <!-- ================= APPLIANCES ================= -->
+            <section class="tab-panel" id="panel-appliances">
+                <p class="screen-title">Appliances</p>
+                <div id="applianceList">
+                    <p class="empty-state">No appliances added yet. Tap "+ Add appliance" to build your device
+                        inventory.</p>
+                </div>
+                <button class="btn btn-teal" id="addApplianceBtn" style="margin-top:6px;">+ Add appliance</button>
+                <div class="section-head">
+                    <h3>Adaptive Consumption Calibration</h3>
+                </div>
+                <div class="chart-card" id="calibrationCard">
+                    <p style="font-size:11.5px;color:#3A2A22;line-height:1.5;margin:0;" id="calibrationText">Once
+                        you've
+                        scanned a bill and added your appliances, Joule AI will compare your device estimate against
+                        your actual bill and show the correction factor here.</p>
+                </div>
+            </section>
+
+            <!-- ================= PREDICT ================= -->
+            <section class="tab-panel" id="panel-predict">
+                <p class="screen-title" id="predictTitle">Bill Prediction</p>
+
+                <div class="chart-card">
+                    <h4 id="predictChartTitle">Your bill, cycle by cycle</h4>
+                    <div id="predictChartWrap">
+                        <p class="empty-state small">No bill history yet. Scan and confirm a bill to start building your
+                            prediction chart.</p>
+                    </div>
+                </div>
+
+                <div class="chart-card" id="monthDetailCard" style="display:none;">
+                    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;">
+                        <h4 id="monthDetailLabel" style="margin:0;">—</h4>
+                        <span id="monthDetailCost"
+                            style="font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:15px;color:#1A120D;">₱0</span>
+                    </div>
+                    <p style="font-size:11px;color:#8A8371;margin:0 0 10px;" id="monthDetailKwh">0 kWh consumed</p>
+                    <div class="field-row"><label>Generation Charge</label><input readonly id="monthDetailGeneration"
+                            value="₱0"></div>
+                    <div class="field-row"><label>Transmission</label><input readonly id="monthDetailTransmission"
+                            value="₱0"></div>
+                    <div class="field-row"><label>System Loss</label><input readonly id="monthDetailSystemLoss"
+                            value="₱0">
+                    </div>
+                    <div class="field-row"><label>Other Charges</label><input readonly id="monthDetailOther" value="₱0">
+                    </div>
+                </div>
+
+                <div class="profile-row" style="margin-bottom:14px;">
+                    <div>
+                        <div class="n">Lifeline / 4Ps beneficiary</div>
+                        <div class="d">Enables non-linear subsidy brackets</div>
+                    </div>
+                    <div class="switch" id="lifelineToggle"></div>
+                </div>
+
+                <div class="lifeline-extra" id="lifelineExtra">
+                    <div class="slider-wrap">
+                        <div class="top-row">
+                            <span style="font-size:12px;color:#8A8371;">Projected consumption</span>
+                            <span class="v" id="sliderVal">0 kWh</span>
+                        </div>
+                        <input type="range" min="0" max="130" value="0" id="kwhSlider">
+                        <span class="bracket-badge" id="bracketBadge">0–50 kWh · 100% off</span>
+                        <div class="danger-banner" id="sliderDangerBanner" style="margin-top:12px;display:none;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FF3636"
+                                stroke-width="2">
+                                <path
+                                    d="M12 9v4M12 17h.01M10.3 3.9L2.5 18a1.5 1.5 0 001.3 2.2h16.4a1.5 1.5 0 001.3-2.2L13.7 3.9a1.5 1.5 0 00-2.7 0z" />
+                            </svg>
+                            <div>
+                                <p class="t">Danger Zone Alert</p>
+                                <p class="d" id="sliderDangerText"></p>
+                            </div>
+                        </div>
+                        <p id="thresholdBreachedNote"
+                            style="font-size:11px;color:#FF3636;font-weight:600;margin-top:10px;display:none;">Threshold
+                            breached — subsidy lost for this cycle.</p>
+                    </div>
+                </div>
+                <p class="empty-state small" id="lifelineOffNote">Turn on Lifeline / 4Ps to see non-linear bracket
+                    pricing
+                    and Danger Zone alerts.</p>
+
+                <div class="premium-card">
+                    <span class="premium-badge">PREMIUM</span>
+                    <h4 id="predictPremiumTitle">Personalized Energy Saving Plan</h4>
+                    <p id="predictPremiumText">The 3–5 changes with the highest peso impact this month, ranked for you.
+                    </p>
+                </div>
+            </section>
+
+            <!-- ================= INSIGHTS ================= -->
+            <section class="tab-panel" id="panel-insights">
+                <p class="screen-title">Insights</p>
+                <div class="eco-card">
+                    <div class="big" id="co2Avoided">0 kg</div>
+                    <div class="l">CO₂ avoided this cycle · DOE grid emission factor estimate</div>
+                </div>
+                <div class="section-head">
+                    <h3>Smart usage recommendations</h3>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-num">1</div>
+                    <div class="tip-body">
+                        <div class="t">Shift aircon use 1 hour earlier</div>
+                        <div class="d">Avoid peak-load hours in your area to reduce compressor strain.</div>
+                        <span class="tip-impact">Typical savings: noticeable on high-aircon-use bills</span>
+                    </div>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-num">2</div>
+                    <div class="tip-body">
+                        <div class="t">Set aircon to 24–25°C</div>
+                        <div class="d">Each degree below 24°C adds meaningfully to compressor runtime.</div>
+                        <span class="tip-impact">Typical savings: compounds every cycle</span>
+                    </div>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-num">3</div>
+                    <div class="tip-body">
+                        <div class="t">Unplug charging cluster overnight</div>
+                        <div class="d">Small standby loads add up across a full billing cycle.</div>
+                        <span class="tip-impact">Typical savings: small but consistent</span>
+                    </div>
+                </div>
+                <div class="premium-card">
+                    <span class="premium-badge">PREMIUM</span>
+                    <h4>Personalized Energy Saving Plan</h4>
+                    <p>Get your top 3–5 changes this month, ranked by peso impact, with projected combined savings.</p>
+                </div>
+            </section>
+
+            <!-- ================= SETTINGS ================= -->
+            <section class="tab-panel" id="panel-settings">
+
+                <div class="settings-view active" id="settings-main">
+                    <p class="screen-title">Settings</p>
+                    <div class="list-row" data-setting="profile">
+                        <div>
+                            <div class="n">Profile</div>
+                            <div class="d" id="settingsProfileDesc">Individual account</div>
+                        </div>
+                        <span class="chev">›</span>
+                    </div>
+                    <div class="list-row" data-setting="subscription">
+                        <div>
+                            <div class="n">Subscription</div>
+                            <div class="d">Free plan · Upgrade for more</div>
+                        </div>
+                        <span class="chev">›</span>
+                    </div>
+                    <div class="list-row" data-setting="notifications">
+                        <div>
+                            <div class="n">Notifications</div>
+                            <div class="d">Alerts, Danger Zone, tips</div>
+                        </div>
+                        <span class="chev">›</span>
+                    </div>
+                    <div class="list-row" data-setting="privacy">
+                        <div>
+                            <div class="n">Privacy &amp; Data</div>
+                            <div class="d">RA 10173 compliant storage</div>
+                        </div>
+                        <span class="chev">›</span>
+                    </div>
+                    <div class="list-row" data-setting="help">
+                        <div>
+                            <div class="n">Help &amp; Support</div>
+                            <div class="d">FAQs, contact, Ask Joule</div>
+                        </div>
+                        <span class="chev">›</span>
+                    </div>
+                </div>
+
+                <div class="settings-view" id="settings-profile">
+                    <div class="mb-breadcrumb"><span class="back" data-settings-back="1">‹</span><span
+                            class="crumb">Profile</span></div>
+                    <div class="name-input-row">
+                        <div>
+                            <div class="n">Name</div>
+                        </div>
+                        <input id="profileNameInput" placeholder="Your name">
+                    </div>
+                    <div class="profile-row">
+                        <div>
+                            <div class="n">Account type</div>
+                            <div class="d">Individual household</div>
+                        </div>
+                    </div>
+                    <div class="profile-row">
+                        <div>
+                            <div class="n">Lifeline / 4Ps beneficiary</div>
+                            <div class="d">Applies non-linear subsidy bracket pricing</div>
+                        </div>
+                        <div class="switch" id="lifelineToggle2"></div>
+                    </div>
+                </div>
+
+                <div class="settings-view" id="settings-subscription">
+                    <div class="mb-breadcrumb"><span class="back" data-settings-back="1">‹</span><span
+                            class="crumb">Subscription</span></div>
+                    <div class="confirm-summary">
+                        <div class="n">Free plan</div>
+                        <div class="d">Bill scanning, appliance inventory, monthly prediction, Danger Zone alerts</div>
+                    </div>
+                    <div class="premium-card">
+                        <span class="premium-badge">PREMIUM</span>
+                        <h4 id="subscriptionPremiumTitle">Individual Premium</h4>
+                        <p id="subscriptionPremiumText">Weekly bill forecast and a personalized energy saving plan
+                            ranked by
+                            peso impact.</p>
+                    </div>
+                    <button class="btn btn-primary">Upgrade to Premium</button>
+                </div>
+
+                <div class="settings-view" id="settings-notifications">
+                    <div class="mb-breadcrumb"><span class="back" data-settings-back="1">‹</span><span
+                            class="crumb">Notifications</span></div>
+                    <div class="profile-row">
+                        <div>
+                            <div class="n">Bill prediction updates</div>
+                            <div class="d">Notify when your projected bill changes</div>
+                        </div>
+                        <div class="switch" data-notif="billAlerts"></div>
+                    </div>
+                    <div class="profile-row">
+                        <div>
+                            <div class="n">Danger Zone alerts</div>
+                            <div class="d">Warn before breaching the lifeline threshold</div>
+                        </div>
+                        <div class="switch" data-notif="dangerZone"></div>
+                    </div>
+                    <div class="profile-row">
+                        <div>
+                            <div class="n">Weekly forecast</div>
+                            <div class="d">Premium — mid-month overspend check-in</div>
+                        </div>
+                        <div class="switch" data-notif="weeklyForecast"></div>
+                    </div>
+                    <div class="profile-row">
+                        <div>
+                            <div class="n">High-usage appliance flags</div>
+                            <div class="d">Alert when a device draws disproportionately</div>
+                        </div>
+                        <div class="switch" data-notif="highUsage"></div>
+                    </div>
+                    <div class="profile-row">
+                        <div>
+                            <div class="n">Savings tips</div>
+                            <div class="d">Smart usage recommendations</div>
+                        </div>
+                        <div class="switch" data-notif="tips"></div>
+                    </div>
+                </div>
+
+                <div class="settings-view" id="settings-privacy">
+                    <div class="mb-breadcrumb"><span class="back" data-settings-back="1">‹</span><span
+                            class="crumb">Privacy
+                            &amp; Data</span></div>
+                    <div class="profile-row">
+                        <div>
+                            <div class="n">Bill data storage</div>
+                            <div class="d">Sanitized figures only · RA 10173 compliant</div>
+                        </div>
+                    </div>
+                    <div class="profile-row">
+                        <div>
+                            <div class="n">Bill images</div>
+                            <div class="d">Never stored — processed in-memory only</div>
+                        </div>
+                    </div>
+                    <div class="profile-row">
+                        <div>
+                            <div class="n">Smart plug add-on</div>
+                            <div class="d">Optional — anchors your aircon's real-time wattage</div>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <p style="font-size:11.5px;color:#3A2A22;line-height:1.5;margin:0;">Account names, TIN, and
+                            service
+                            addresses are discarded at the Regex Filtering step and never reach the database.</p>
+                    </div>
+                </div>
+
+                <div class="settings-view" id="settings-help">
+                    <div class="mb-breadcrumb"><span class="back" data-settings-back="1">‹</span><span
+                            class="crumb">Help
+                            &amp; Support</span></div>
+                    <div class="list-row">
+                        <div>
+                            <div class="n">FAQs</div>
+                            <div class="d">Common questions about bills &amp; predictions</div>
+                        </div><span class="chev">›</span>
+                    </div>
+                    <div class="list-row">
+                        <div>
+                            <div class="n">Contact support</div>
+                            <div class="d">Reach the Joule AI team</div>
+                        </div><span class="chev">›</span>
+                    </div>
+                    <div class="chart-card">
+                        <p style="font-size:11.5px;color:#3A2A22;line-height:1.5;margin:0;">Need a quick answer instead?
+                            Tap
+                            the <b>Ask Joule</b> button in the corner of the screen any time.</p>
+                    </div>
+                </div>
+
+            </section>
+
+        </div>
+
+        <!-- AI Floating Action Button -->
+        <div class="chat-fab-wrap">
+            <button class="chat-fab" id="chatFab" aria-label="Ask Joule">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#1A120D" stroke-width="2">
+                    <path d="M4 4h16v12H8l-4 4V4z" />
+                    <path d="M8 9h8M8 12h5" />
+                </svg>
+            </button>
+        </div>
+
+        <div class="chat-overlay" id="chatOverlay">
+            <div class="chat-panel">
+                <div class="chat-header">
+                    <div class="chat-header-title"><span class="chat-avatar">⚡</span> Ask Joule</div>
+                    <div class="close" id="closeChat">✕</div>
+                </div>
+                <div class="chat-messages" id="chatMessages"></div>
+                <div class="chat-quickreplies" id="chatQuick"></div>
+                <div class="chat-input-row">
+                    <input id="chatInput" placeholder="Ask about your bill, appliances, savings...">
+                    <button id="chatSendBtn" aria-label="Send">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#F4F1E8" stroke-width="2">
+                            <path d="M22 2L11 13" />
+                            <path d="M22 2l-7 20-4-9-9-4 20-7z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="modalOverlay">
+            <div class="modal-sheet" id="modalSheet"></div>
+        </div>
+
+        <div class="toast" id="toast"></div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <button class="nav-btn active" data-tab="home">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 11l9-8 9 8" />
+                    <path d="M5 10v10h14V10" />
+                </svg>
+                <span>Home</span>
+            </button>
+            <button class="nav-btn" data-tab="scan">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="4" y="3" width="16" height="18" rx="2" />
+                    <path d="M8 8h8M8 12h8M8 16h5" />
+                </svg>
+                <span>Scan</span>
+            </button>
+            <button class="nav-btn" data-tab="appliances">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="12" rx="2" />
+                    <path d="M8 20h8M12 16v4" />
+                </svg>
+                <span>Devices</span>
+            </button>
+            <button class="nav-btn" data-tab="predict">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 19V5M4 19h16M8 15l3-4 3 2 4-6" />
+                </svg>
+                <span>Predict</span>
+            </button>
+            <button class="nav-btn" data-tab="insights">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2a6 6 0 00-4 10.5c.6.6 1 1.4 1 2.5h6c0-1.1.4-1.9 1-2.5A6 6 0 0012 2z" />
+                    <path d="M10 18h4M11 21h2" />
+                </svg>
+                <span>Insights</span>
+            </button>
+            <button class="nav-btn" data-tab="settings">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3" />
+                    <path
+                        d="M19.4 13a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V19a2 2 0 01-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H4a2 2 0 010-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H10a1.65 1.65 0 001-1.51V4a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V10a1.65 1.65 0 001.51 1H20a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" />
+                </svg>
+                <span>Settings</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Landing Page
+        var landingPage = document.getElementById('landingPage');
+        var startDemoBtn = document.getElementById('start-demo');
+        var learnMoreBtn = document.getElementById('learn-more');
+
+        if (startDemoBtn) {
+            startDemoBtn.addEventListener('click', function () {
+                landingPage.classList.add('fadeout');
+                landingPage.addEventListener('transitionend', function handler() {
+                    landingPage.classList.add('hidden');
+                    landingPage.removeEventListener('transitionend', handler);
+                });
+            });
+        }
+
+        if (learnMoreBtn) {
+            learnMoreBtn.addEventListener('click', function () {
+                document.querySelector('.landing-stat-strip').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            });
+        }
+
+        // State
+        const state = {
+            tab: 'home',
+            lifeline: false,
+            sliderKwh: 0,
+            scanStage: 0, // 0 idle, 1-3 progress, 4 confirm
+            settingsView: 'main',
+            notifPrefs: { billAlerts: false, dangerZone: false, weeklyForecast: false, highUsage: false, tips: false },
+            chatMessages: [],
+            appliances: [],
+            billHistory: [],
+            selectedMonth: null,
+            profileName: ''
+        };
+
+        // ---------------- Reference catalog (product database, not user data) ----------------
+        const catData = [
+            { id: 'ac', label: 'Aircon', icon: '❄' },
+            { id: 'fridge', label: 'Refrigerator', icon: '▢' },
+            { id: 'wash', label: 'Washing Machine', icon: '◍' },
+            { id: 'tv', label: 'TV / Entertainment', icon: '▭' },
+            { id: 'water', label: 'Water Heater', icon: '♨' },
+            { id: 'bulb', label: 'Charging & Lighting', icon: '✦' },
+        ];
+
+        // Mock appliance reference database — standing in for Joule AI's real model database
+        const applianceDB = {
+            ac: {
+                types: ['Split System', 'Window Unit', 'Portable AC', 'Ductless Mini-Split'],
+                brands: [
+                    {
+                        name: 'Samsung', models: [
+                            {
+                                name: 'WindFree AI Comfort Inverter', type: 'Split System', variants: [
+                                    { label: '1.0 HP', watts: 780, kwhMonth: 105, inverter: true, doe: true },
+                                    { label: '1.5 HP', watts: 1050, kwhMonth: 142, inverter: true, doe: true },
+                                    { label: '2.0 HP', watts: 1400, kwhMonth: 189, inverter: true, doe: true },
+                                ]
+                            },
+                            {
+                                name: 'Digital Inverter Split AC', type: 'Split System', variants: [
+                                    { label: '1.0 HP', watts: 800, kwhMonth: 108, inverter: true, doe: true },
+                                    { label: '1.5 HP', watts: 1080, kwhMonth: 146, inverter: true, doe: true },
+                                ]
+                            },
+                        ]
+                    },
+                    {
+                        name: 'LG', models: [
+                            {
+                                name: 'Dual Inverter Split-Type', type: 'Split System', variants: [
+                                    { label: '1.0 HP', watts: 760, kwhMonth: 102, inverter: true, doe: true },
+                                    { label: '1.5 HP', watts: 1020, kwhMonth: 138, inverter: true, doe: true },
+                                    { label: '2.5 HP', watts: 1850, kwhMonth: 250, inverter: true, doe: true },
+                                ]
+                            },
+                            {
+                                name: 'Window Type Inverter', type: 'Window Unit', variants: [
+                                    { label: '0.75 HP', watts: 620, kwhMonth: 84, inverter: true, doe: false },
+                                    { label: '1.0 HP', watts: 790, kwhMonth: 107, inverter: true, doe: false },
+                                ]
+                            },
+                        ]
+                    },
+                    {
+                        name: 'Carrier', models: [
+                            {
+                                name: 'Optimax Inverter', type: 'Split System', variants: [
+                                    { label: '1.0 HP', watts: 770, kwhMonth: 104, inverter: true, doe: true },
+                                    { label: '1.5 HP', watts: 1040, kwhMonth: 141, inverter: true, doe: true },
+                                ]
+                            },
+                            {
+                                name: 'Window Type Non-Inverter', type: 'Window Unit', variants: [
+                                    { label: '0.75 HP', watts: 700, kwhMonth: 151, inverter: false, doe: false },
+                                    { label: '1.0 HP', watts: 900, kwhMonth: 194, inverter: false, doe: false },
+                                ]
+                            },
+                        ]
+                    },
+                    {
+                        name: 'Kolin', models: [
+                            {
+                                name: 'Portable Aircon', type: 'Portable AC', variants: [
+                                    { label: '0.9 HP', watts: 850, kwhMonth: 183, inverter: false, doe: false },
+                                    { label: '1.3 HP', watts: 1150, kwhMonth: 248, inverter: false, doe: false },
+                                ]
+                            },
+                        ]
+                    },
+                    {
+                        name: 'Daikin', models: [
+                            {
+                                name: 'Inverter Ductless Mini-Split', type: 'Ductless Mini-Split', variants: [
+                                    { label: '1.0 HP', watts: 750, kwhMonth: 101, inverter: true, doe: true },
+                                    { label: '2.0 HP', watts: 1380, kwhMonth: 186, inverter: true, doe: true },
+                                ]
+                            },
+                        ]
+                    },
+                ]
+            },
+            fridge: {
+                types: ['Single Door', 'Two Door / Top Freezer', 'Side-by-Side'],
+                brands: [
+                    {
+                        name: 'Samsung', models: [
+                            {
+                                name: 'Digital Inverter Two-Door', type: 'Two Door / Top Freezer', variants: [
+                                    { label: '7 cu.ft', watts: 95, kwhMonth: 32, inverter: true, doe: true },
+                                    { label: '11 cu.ft', watts: 120, kwhMonth: 41, inverter: true, doe: true },
+                                ]
+                            },
+                        ]
+                    },
+                    {
+                        name: 'LG', models: [
+                            {
+                                name: 'Inverter Linear Refrigerator', type: 'Side-by-Side', variants: [
+                                    { label: '14 cu.ft', watts: 140, kwhMonth: 48, inverter: true, doe: true },
+                                    { label: '22 cu.ft', watts: 165, kwhMonth: 56, inverter: true, doe: true },
+                                ]
+                            },
+                        ]
+                    },
+                    {
+                        name: 'Condura', models: [
+                            {
+                                name: 'Single Door Refrigerator', type: 'Single Door', variants: [
+                                    { label: '4.5 cu.ft', watts: 75, kwhMonth: 38, inverter: false, doe: false },
+                                    { label: '6.8 cu.ft', watts: 90, kwhMonth: 46, inverter: false, doe: false },
+                                ]
+                            },
+                        ]
+                    },
+                ]
+            },
+            wash: {
+                types: ['Top Load', 'Front Load', 'Twin Tub'],
+                brands: [
+                    {
+                        name: 'Samsung', models: [
+                            {
+                                name: 'Eco Bubble Front Load', type: 'Front Load', variants: [
+                                    { label: '8 kg', watts: 350, kwhMonth: 12, inverter: true, doe: true },
+                                    { label: '10 kg', watts: 400, kwhMonth: 14, inverter: true, doe: true },
+                                ]
+                            },
+                        ]
+                    },
+                    {
+                        name: 'LG', models: [
+                            {
+                                name: 'Inverter Direct Drive Top Load', type: 'Top Load', variants: [
+                                    { label: '9 kg', watts: 380, kwhMonth: 13, inverter: true, doe: true },
+                                    { label: '13 kg', watts: 420, kwhMonth: 15, inverter: true, doe: true },
+                                ]
+                            },
+                        ]
+                    },
+                    {
+                        name: 'Fujidenzo', models: [
+                            {
+                                name: 'Twin Tub Washer', type: 'Twin Tub', variants: [
+                                    { label: '7 kg', watts: 300, kwhMonth: 9, inverter: false, doe: false },
+                                ]
+                            },
+                        ]
+                    },
+                ]
+            },
+            tv: {
+                types: ['LED TV', 'Smart TV'],
+                brands: [
+                    {
+                        name: 'Samsung', models: [
+                            {
+                                name: 'Crystal UHD Smart TV', type: 'Smart TV', variants: [
+                                    { label: '43"', watts: 65, kwhMonth: 12, inverter: false, doe: true },
+                                    { label: '55"', watts: 90, kwhMonth: 16, inverter: false, doe: true },
+                                ]
+                            },
+                        ]
+                    },
+                    {
+                        name: 'TCL', models: [
+                            {
+                                name: 'Google TV LED', type: 'LED TV', variants: [
+                                    { label: '32"', watts: 45, kwhMonth: 8, inverter: false, doe: false },
+                                    { label: '50"', watts: 80, kwhMonth: 14, inverter: false, doe: false },
+                                ]
+                            },
+                        ]
+                    },
+                ]
+            },
+            water: {
+                types: ['Instant', 'Storage Tank'],
+                brands: [
+                    {
+                        name: 'Hitachi', models: [
+                            {
+                                name: 'Instant Water Heater', type: 'Instant', variants: [
+                                    { label: '2600W', watts: 2600, kwhMonth: 20, inverter: false, doe: false },
+                                ]
+                            },
+                        ]
+                    },
+                    {
+                        name: 'Rheem', models: [
+                            {
+                                name: 'Storage Tank Heater', type: 'Storage Tank', variants: [
+                                    { label: '15L', watts: 1500, kwhMonth: 35, inverter: false, doe: false },
+                                ]
+                            },
+                        ]
+                    },
+                ]
+            },
+        };
+
+        function iconFor(type) {
+            const icons = {
+                ac: '<path d="M3 6h18M6 6v12M12 6v12M18 6v12" stroke="#FF3636" stroke-width="2" fill="none"/>',
+                fridge: '<rect x="6" y="3" width="12" height="18" rx="1.5" stroke="#FF3636" stroke-width="2" fill="none"/><path d="M6 10h12" stroke="#FF3636" stroke-width="2"/>',
+                wash: '<circle cx="12" cy="13" r="6" stroke="#FF3636" stroke-width="2" fill="none"/><path d="M8 4h8" stroke="#FF3636" stroke-width="2"/>',
+                bulb: '<circle cx="12" cy="10" r="5" stroke="#FF3636" stroke-width="2" fill="none"/><path d="M10 18h4M11 21h2" stroke="#FF3636" stroke-width="2"/>',
+                tv: '<rect x="3" y="5" width="18" height="12" rx="1.5" stroke="#FF3636" stroke-width="2" fill="none"/><path d="M9 20h6" stroke="#FF3636" stroke-width="2"/>',
+                water: '<path d="M12 3s5 6 5 10a5 5 0 01-10 0c0-4 5-10 5-10z" stroke="#FF3636" stroke-width="2" fill="none"/>',
+            };
+            return icons[type] || icons.bulb;
+        }
+
+        // ---------------- Small helpers ----------------
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+        function applianceTotals() {
+            return state.appliances.reduce((acc, a) => ({ kwh: acc.kwh + a.kwh, cost: acc.cost + a.cost }), { kwh: 0, cost: 0 });
+        }
+        function animateCount(el, targetCost, kwh) {
+            let t0 = performance.now();
+            const dur = 500;
+            function step(t) {
+                const p = Math.min(1, (t - t0) / dur);
+                const val = Math.floor(targetCost * p);
+                el.innerHTML = `₱${val.toLocaleString()}<span class="unit">/ ${kwh} kWh</span>`;
+                if (p < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+        }
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2400);
+        }
+
+        // ---------------- HOME ----------------
+        function updateHome() {
+            const totals = applianceTotals();
+            const totalKwh = totals.kwh;
+            const totalCost = totals.cost;
+
+            document.getElementById('meterLabel').textContent = 'Projected bill · This cycle';
+            animateCount(document.getElementById('mainMeter'), totalCost, totalKwh);
+
+            document.getElementById('deviceCount').textContent = state.appliances.length;
+            document.getElementById('deviceCountLabel').textContent = 'devices tracked';
+            document.getElementById('cycleDaysLabel').textContent = state.billHistory.length ? `${state.billHistory.length} cycle${state.billHistory.length > 1 ? 's' : ''} logged` : 'No cycles logged yet';
+
+            document.getElementById('statKwh').textContent = totalKwh;
+            const co2 = Math.round(totalKwh * 0.65 * 10) / 10;
+            document.getElementById('statCo2').innerHTML = `${co2}<span style="font-size:10px"> kg</span>`;
+
+            if (state.billHistory.length >= 2) {
+                const last = state.billHistory[state.billHistory.length - 1];
+                const prev = state.billHistory[state.billHistory.length - 2];
+                const pct = prev.kwh ? Math.round(((last.kwh - prev.kwh) / prev.kwh) * 100) : 0;
+                document.getElementById('statThird').textContent = (pct > 0 ? '+' : '') + pct + '%';
+            } else {
+                document.getElementById('statThird').textContent = '—';
+            }
+            document.getElementById('statThirdLabel').textContent = 'vs last cycle';
+
+            const dangerEl = document.getElementById('homeDangerBanner');
+            if (state.lifeline && totalKwh >= 92 && totalKwh > 0) {
+                dangerEl.style.display = 'flex';
+                document.getElementById('homeDangerText').textContent = `Tracked at ${totalKwh} kWh so far. ${Math.max(0, 100 - totalKwh)} more kWh would breach the 100 kWh lifeline limit. Check the Predict tab to explore this.`;
+            } else {
+                dangerEl.style.display = 'none';
+            }
+
+            const listEl = document.getElementById('topDevicesList');
+            document.getElementById('topDevicesTitle').textContent = 'Top consuming devices';
+            if (state.appliances.length === 0) {
+                listEl.innerHTML = `<p class="empty-state">No devices tracked yet. Add your appliances to see your top consumers here.</p>`;
+            } else {
+                const top3 = [...state.appliances].sort((a, b) => b.cost - a.cost).slice(0, 3);
+                listEl.innerHTML = top3.map(a => `
+    <div class="appliance-row">
+        <div class="app-icon ${a.hot ? 'hot' : ''}"><svg viewBox="0 0 24 24" width="18" height="18">${iconFor(a.icon)}</svg></div>
+        <div class="app-info"><div class="n">${escapeHtml(a.name)}</div><div class="m">${a.hours}h/day avg</div>${a.hot ? '<div class="flag">HIGH USE</div>' : ''}</div>
+        <div class="app-cost"><div class="p">₱${a.cost}</div><div class="k">${a.kwh} kWh</div></div>
+    </div>`).join('');
+            }
+
+            const trendEl = document.getElementById('trendRow');
+            if (state.billHistory.length === 0) {
+                trendEl.innerHTML = '';
+            } else {
+                const last7 = state.billHistory.slice(-7);
+                const maxKwh = Math.max(...last7.map(b => b.kwh), 1);
+                trendEl.innerHTML = last7.map((b, i) => `<div class="trend-bar ${i === last7.length - 1 ? 'now' : ''}" style="height:${Math.max(2, (b.kwh / maxKwh) * 34)}px"></div>`).join('');
+            }
+
+            document.getElementById('premiumHomeTitle').textContent = 'Weekly Bill Forecast';
+            document.getElementById('premiumHomeText').textContent = "Mid-month check-in on whether you're on track to overspend — before the bill arrives.";
+        }
+
+        // ---------------- APPLIANCES ----------------
+        function updateAppliancesPanel() {
+            renderApplianceList();
+            updateCalibrationText();
+        }
+
+        function renderApplianceList() {
+            const el = document.getElementById('applianceList');
+            if (state.appliances.length === 0) {
+                el.innerHTML = `<p class="empty-state">No appliances added yet. Tap "+ Add appliance" to build your device inventory.</p>`;
+                return;
+            }
+            el.innerHTML = state.appliances.map((a) => `
+    <div class="appliance-row">
+        <div class="app-icon ${a.hot ? 'hot' : ''}"><svg viewBox="0 0 24 24" width="18" height="18">${iconFor(a.icon)}</svg></div>
+        <div class="app-info">
+        <div class="n">${escapeHtml(a.name)}</div>
+        <div class="m">${a.hours}h/day · ${a.inverter ? 'inverter, load-modulated' : 'fixed-speed'}</div>
+        ${a.hot ? '<div class="flag">HIGH USE</div>' : ''}
+        </div>
+        <div class="app-cost"><div class="p">₱${a.cost}</div><div class="k">${a.kwh} kWh/mo</div></div>
+    </div>`).join('');
+        }
+
+        function updateCalibrationText() {
+            const el = document.getElementById('calibrationText');
+            const totals = applianceTotals();
+            const lastBill = state.billHistory[state.billHistory.length - 1];
+            if (!lastBill || state.appliances.length === 0) {
+                el.innerHTML = `Once you've scanned a bill and added your appliances, Joule AI will compare your device estimate against your actual bill and show the correction factor here.`;
+                return;
+            }
+            const gap = Math.round(lastBill.amountDue - totals.cost);
+            el.innerHTML = `Your last confirmed bill was <b>₱${lastBill.amountDue.toLocaleString()}</b>. Estimated device total was <b>₱${totals.cost.toLocaleString()}</b>. Joule AI distributes the <b>₱${Math.abs(gap).toLocaleString()}</b> gap back across your profile as a correction factor — accuracy improves every cycle.`;
+        }
+
+        // ---------------- PREDICT ----------------
+        function updatePredict() {
+            document.getElementById('predictTitle').textContent = 'Bill Prediction';
+            document.getElementById('predictChartTitle').textContent = 'Your bill, cycle by cycle';
+
+            const wrap = document.getElementById('predictChartWrap');
+            const monthCard = document.getElementById('monthDetailCard');
+            if (state.billHistory.length === 0) {
+                wrap.innerHTML = `<p class="empty-state small">No bill history yet. Scan and confirm a bill to start building your prediction chart.</p>`;
+                monthCard.style.display = 'none';
+            } else {
+                if (state.selectedMonth === null || state.selectedMonth >= state.billHistory.length) state.selectedMonth = state.billHistory.length - 1;
+                const max = Math.max(...state.billHistory.map(b => b.amountDue), 1);
+                const bw = 42, gap = 16;
+                const svgWidth = state.billHistory.length * (bw + gap) + 10;
+                const bars = state.billHistory.map((b, i) => {
+                    const x = 10 + i * (bw + gap), h = (b.amountDue / max) * 95, y = 110 - h;
+                    const isSel = i === state.selectedMonth;
+                    return `<g class="bar-hit" data-month-idx="${i}" style="cursor:pointer;">
+        <rect x="${x - 3}" y="0" width="${bw + 6}" height="112" fill="transparent"/>
+        <rect x="${x}" y="${y}" width="${bw}" height="${h}" rx="6" fill="#1A120D" opacity="${isSel ? 1 : 0.55}" stroke="${isSel ? '#1A120D' : 'none'}" stroke-width="${isSel ? 2 : 0}"/>
+        </g>`;
+                }).join('');
+                wrap.innerHTML = `
+        <svg viewBox="0 0 ${Math.max(300, svgWidth)} 120" width="100%" height="120">${bars}</svg>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:#8A8371;margin-top:4px;">
+        ${state.billHistory.map((b, i) => `<span style="${i === state.selectedMonth ? 'text-decoration:underline;font-weight:700;color:#1A120D;' : ''}">Cycle ${i + 1}</span>`).join('')}
+        </div>`;
+                document.querySelectorAll('.bar-hit').forEach(g => {
+                    g.onclick = () => { state.selectedMonth = parseInt(g.dataset.monthIdx); updatePredict(); };
+                });
+
+                const sel = state.billHistory[state.selectedMonth];
+                monthCard.style.display = 'block';
+                document.getElementById('monthDetailLabel').textContent = `Cycle ${state.selectedMonth + 1}` + (state.selectedMonth === state.billHistory.length - 1 ? ' · most recent' : '');
+                document.getElementById('monthDetailCost').textContent = `₱${sel.amountDue.toLocaleString()}`;
+                document.getElementById('monthDetailKwh').textContent = `${sel.kwh} kWh consumed`;
+                document.getElementById('monthDetailGeneration').value = `₱${sel.generation.toLocaleString()}`;
+                document.getElementById('monthDetailTransmission').value = `₱${sel.transmission.toLocaleString()}`;
+                document.getElementById('monthDetailSystemLoss').value = `₱${sel.systemLoss.toLocaleString()}`;
+                document.getElementById('monthDetailOther').value = `₱${sel.otherCharges.toLocaleString()}`;
+            }
+
+            document.getElementById('lifelineToggle').classList.toggle('on', state.lifeline);
+            document.getElementById('lifelineToggle2').classList.toggle('on', state.lifeline);
+            const lifelineExtra = document.getElementById('lifelineExtra');
+            const lifelineOffNote = document.getElementById('lifelineOffNote');
+            if (state.lifeline) {
+                lifelineExtra.classList.add('active');
+                lifelineOffNote.style.display = 'none';
+                updateLifelineSlider();
+            } else {
+                lifelineExtra.classList.remove('active');
+                lifelineOffNote.style.display = 'block';
+            }
+
+            document.getElementById('predictPremiumTitle').textContent = 'Personalized Energy Saving Plan';
+            document.getElementById('predictPremiumText').textContent = 'The 3–5 changes with the highest peso impact this month, ranked for you.';
+        }
+
+        function updateLifelineSlider() {
+            const kwh = state.sliderKwh;
+            document.getElementById('kwhSlider').value = kwh;
+            document.getElementById('sliderVal').textContent = `${kwh} kWh`;
+            let bracket, discount, color;
+            if (kwh <= 50) { bracket = '0–50 kWh'; discount = '100% off'; color = '#C9A000'; }
+            else if (kwh <= 70) { bracket = '51–70 kWh'; discount = '35% off'; color = '#E08A00'; }
+            else if (kwh <= 100) { bracket = '71–100 kWh'; discount = '20% off'; color = '#FF7A29'; }
+            else { bracket = '101+ kWh'; discount = 'Full rate'; color = '#FF3636'; }
+            const badge = document.getElementById('bracketBadge');
+            badge.textContent = `${bracket} · ${discount}`;
+            badge.style.background = color + '22';
+            badge.style.color = color;
+
+            const showDanger = state.lifeline && kwh >= 95 && kwh < 100;
+            const dangerEl = document.getElementById('sliderDangerBanner');
+            if (showDanger) {
+                dangerEl.style.display = 'flex';
+                document.getElementById('sliderDangerText').textContent = `Your projected consumption is ${kwh} kWh. Consuming ${100 - kwh} more kWh will breach the 100 kWh lifeline limit, causing your bill to jump sharply. Consider reducing aircon use today.`;
+            } else {
+                dangerEl.style.display = 'none';
+            }
+            document.getElementById('thresholdBreachedNote').style.display = kwh >= 101 ? 'block' : 'none';
+        }
+
+        // ---------------- INSIGHTS ----------------
+        function updateInsights() {
+            const totals = applianceTotals();
+            const kwh = totals.kwh || (state.billHistory.length ? state.billHistory[state.billHistory.length - 1].kwh : 0);
+            const co2 = Math.round(kwh * 0.65 * 10) / 10;
+            document.getElementById('co2Avoided').textContent = `${co2} kg`;
+        }
+
+        // ---------------- SETTINGS ----------------
+        function updateSettingsProfile() {
+            document.getElementById('settingsProfileDesc').textContent = 'Individual account';
+            document.getElementById('lifelineToggle2').classList.toggle('on', state.lifeline);
+            document.getElementById('profileNameInput').value = state.profileName;
+
+            document.getElementById('subscriptionPremiumTitle').textContent = 'Individual Premium';
+            document.getElementById('subscriptionPremiumText').textContent = 'Weekly bill forecast and a personalized energy saving plan ranked by peso impact.';
+        }
+
+        function showSettingsView(view) {
+            state.settingsView = view;
+            document.querySelectorAll('.settings-view').forEach(v => v.classList.toggle('active', v.id === 'settings-' + view));
+            if (view === 'profile' || view === 'subscription') updateSettingsProfile();
+        }
+
+        // ---------------- Tab switching ----------------
+        function switchTab(tab) {
+            state.tab = tab;
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + tab));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+            if (tab === 'scan') showScanView(state.scanStage === 0 ? 'idle' : (state.scanStage >= 1 && state.scanStage <= 3 ? 'progress' : 'confirm'));
+        }
+
+        // ---------------- SCAN pipeline ----------------
+        function showScanView(view) {
+            document.querySelectorAll('.scan-view').forEach(v => v.classList.toggle('active', v.id === 'scan-' + view));
+        }
+
+        function updateScanDots() {
+            for (let i = 1; i <= 3; i++) {
+                const dot = document.getElementById('scanDot' + i);
+                dot.classList.remove('done', 'active');
+                if (i < state.scanStage) { dot.classList.add('done'); dot.textContent = '✓'; }
+                else if (i === state.scanStage) { dot.classList.add('active'); dot.textContent = i; }
+                else { dot.textContent = i; }
+            }
+            const fieldBoxes = ['hlKwh', 'hlCharges', 'hlAmount'];
+            const redactBoxes = ['hlName', 'hlAddress'];
+            fieldBoxes.forEach(id => document.getElementById(id).classList.toggle('show', state.scanStage >= 2));
+            redactBoxes.forEach(id => document.getElementById(id).classList.toggle('show', state.scanStage >= 3));
+        }
+
+        function generateSampleBillDataUrl() {
+            const svg = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="300" height="400" viewBox="0 0 300 400">
+                    <rect width="300" height="400" fill="#FBF8F2"/>
+                    <rect x="24" y="20" width="130" height="14" rx="3" fill="#1A120D" opacity="0.85"/>
+                    <rect x="24" y="42" width="180" height="9" rx="3" fill="#8A8371"/>
+                    <rect x="24" y="64" width="150" height="9" rx="3" fill="#8A8371"/>
+                    <line x1="24" y1="100" x2="276" y2="100" stroke="#E4DFD3" stroke-width="2"/>
+                    <rect x="24" y="120" width="60" height="8" rx="2" fill="#8A8371"/>
+                    <rect x="24" y="152" width="100" height="20" rx="4" fill="#1A120D" opacity="0.8"/>
+                    <rect x="24" y="182" width="70" height="8" rx="2" fill="#8A8371"/>
+                    <rect x="24" y="208" width="130" height="20" rx="4" fill="#1A120D" opacity="0.7"/>
+                    <rect x="24" y="238" width="70" height="8" rx="2" fill="#8A8371"/>
+                    <rect x="24" y="264" width="112" height="24" rx="4" fill="#FF3636" opacity="0.85"/>
+                    <rect x="24" y="310" width="252" height="1" fill="#E4DFD3"/>
+                    <rect x="24" y="330" width="200" height="8" rx="2" fill="#C9BEB3"/>
+                    <rect x="24" y="348" width="160" height="8" rx="2" fill="#C9BEB3"/>
+                </svg>`;
+            return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+        }
+
+        function startScan(imageSrc) {
+            document.getElementById('scanPreviewImg').style.opacity = '1';
+            document.getElementById('scanPreviewImg').style.filter = 'brightness(0.92) saturate(1.02)';
+            document.getElementById('scanPreviewImg').src = imageSrc;
+            document.getElementById('scanDiscardNote').textContent = 'Bill image is discarded — only these validated figures are kept';
+            runScanPipeline();
+        }
+
+        function runScanPipeline() {
+            state.scanStage = 1;
+            showScanView('progress');
+            updateScanDots();
+            let n = 1;
+            const iv = setInterval(() => {
+                n++;
+                if (n > 3) {
+                    clearInterval(iv);
+                    // Simulate the privacy pipeline discarding the raw image once fields are extracted
+                    const img = document.getElementById('scanPreviewImg');
+                    img.style.filter = 'brightness(0.92) saturate(1.02) blur(14px)';
+                    img.style.opacity = '0.35';
+                    document.getElementById('scanDiscardNote').textContent = '✓ Bill image discarded from memory — only the figures below were kept';
+                    state.scanStage = 4;
+                    showScanView('confirm');
+                    return;
+                }
+                state.scanStage = n;
+                updateScanDots();
+            }, 750);
+        }
+
+        // ---------------- Ask Joule chatbot ----------------
+        const chatQuickReplies = [
+            "Why is my bill high?",
+            "Am I close to losing my subsidy?",
+            "How do I add an appliance?",
+            "How can I save this month?",
+        ];
+
+        function openChat() {
+            document.getElementById('chatOverlay').classList.add('show');
+            if (state.chatMessages.length === 0) {
+                state.chatMessages.push({ from: 'bot', text: "Hi! I'm Joule — your AI energy assistant. Ask me anything about your bill, appliances, or how to save this month." });
+            }
+            renderChat();
+        }
+        function closeChat() {
+            document.getElementById('chatOverlay').classList.remove('show');
+        }
+
+        function renderChat() {
+            const msgsEl = document.getElementById('chatMessages');
+            msgsEl.innerHTML = state.chatMessages.map(m => `<div class="chat-bubble ${m.from}">${escapeHtml(m.text)}</div>`).join('');
+            msgsEl.scrollTop = msgsEl.scrollHeight;
+
+            const quickEl = document.getElementById('chatQuick');
+            quickEl.innerHTML = chatQuickReplies.map(q => `<div class="chat-chip" data-quick="${escapeHtml(q)}">${escapeHtml(q)}</div>`).join('');
+            document.querySelectorAll('[data-quick]').forEach(chip => {
+                chip.onclick = () => sendChatMessage(chip.dataset.quick);
+            });
+        }
+
+        function getJouleReply(text) {
+            const t = text.toLowerCase();
+            const totals = applianceTotals();
+            if (t.includes('bill') && (t.includes('high') || t.includes('why'))) {
+                if (state.appliances.length === 0) return "I don't have any appliances tracked for you yet — add a few in the Devices tab and I can tell you exactly what's driving your bill.";
+                const top = [...state.appliances].sort((a, b) => b.cost - a.cost)[0];
+                return `Right now "${top.name}" is your biggest driver at ₱${top.cost}/mo out of a ₱${totals.cost} device total. Want to see the full breakdown in Predict?`;
+            }
+            if (t.includes('lifeline') || t.includes('subsidy')) {
+                return "If you're enrolled as a Lifeline/4Ps beneficiary, staying under 100 kWh keeps your discount. Turn on Lifeline in the Predict tab and drag the slider to see exactly how close you are.";
+            }
+            if (t.includes('add') && t.includes('appliance')) {
+                return "Tap the Devices tab, then \"+ Add appliance.\" Pick a category, then brand and model — I'll pull the wattage and DOE/PELP figures for you automatically.";
+            }
+            if (t.includes('save') || t.includes('saving')) {
+                return "Check the Insights tab for savings tips. In general: shifting aircon use off-peak, keeping it at 24–25°C, and unplugging small standby loads overnight tend to help the most.";
+            }
+            if (t.includes('co2') || t.includes('carbon') || t.includes('environment')) {
+                return "Your CO₂ avoided estimate is on the Insights tab, based on your tracked kWh and the DOE grid emission factor.";
+            }
+            return "Good question! In the full version, I'd pull this from your actual bill history and appliance profile using retrieval-augmented search. For this demo, try asking about your bill, your lifeline subsidy, adding an appliance, or ways to save.";
+        }
+
+        function sendChatMessage(text) {
+            if (!text || !text.trim()) return;
+            state.chatMessages.push({ from: 'user', text });
+            renderChat();
+            setTimeout(() => {
+                state.chatMessages.push({ from: 'bot', text: getJouleReply(text) });
+                renderChat();
+            }, 500);
+        }
+
+        // ---------------- Add Appliance Wizard ----------------
+        // This wizard browses Joule AI's reference catalog (catData / applianceDB
+        // above) — it is product/reference data, not information about the user.
+        // No appliance is added until the person completes the flow themselves.
+        let modal = { step: 'category', catId: null, brandName: null, modelObj: null, variant: null, search: '', typeFilter: 'All', hours: 4 };
+
+        function resetModal() {
+            modal = { step: 'category', catId: null, brandName: null, modelObj: null, variant: null, search: '', typeFilter: 'All', hours: 4 };
+        }
+
+        function openAddApplianceModal() {
+            resetModal();
+            document.getElementById('modalOverlay').classList.add('show');
+            renderModalSheet();
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('show');
+        }
+
+        function renderModalSheet() {
+            const sheet = document.getElementById('modalSheet');
+            sheet.innerHTML = modalStepHTML();
+            wireModalSheet();
+        }
+
+        function modalStepHTML() {
+            if (modal.step === 'category') return modalCategoryHTML();
+            if (modal.step === 'brand') return modalBrandHTML();
+            if (modal.step === 'model') return modalModelHTML();
+            if (modal.step === 'variant') return modalVariantHTML();
+            if (modal.step === 'confirm') return modalConfirmHTML();
+            if (modal.step === 'bulbConfirm') return modalBulbConfirmHTML();
+            return '';
+        }
+
+        function breadcrumb(crumbs, backStep) {
+            return `<div class="mb-breadcrumb">
+    ${backStep ? `<span class="back" data-back="${backStep}">‹</span>` : ''}
+    ${crumbs.map((c, i) => i === crumbs.length - 1 ? `<span class="crumb">${c}</span>` : `<span>${c} ›</span>`).join(' ')}
+    </div>`;
+        }
+
+        function modalCategoryHTML() {
+            return `
+    <div class="close" id="closeModal">✕</div>
+    <h3>Add appliance</h3>
+    <p style="font-size:11.5px;color:#8A8371;margin:0;">Pick a category to search Joule AI's Philippine appliance database by brand and model.</p>
+    <div class="cat-grid">
+        ${catData.map(c => `<div class="cat-chip" data-cat="${c.id}">${c.icon}<br>${c.label}</div>`).join('')}
+    </div>
+    `;
+        }
+
+        function modalBrandHTML() {
+            const cat = catData.find(c => c.id === modal.catId);
+            const brands = applianceDB[modal.catId].brands;
+            return `
+    <div class="close" id="closeModal">✕</div>
+    ${breadcrumb(['Add appliance', cat.label], 'category')}
+    <h3 style="margin-top:0;">Choose a brand</h3>
+    ${brands.map(b => `
+    <div class="list-row" data-brand="${b.name}">
+        <div><div class="n">${b.name}</div><div class="d">${b.models.length} model line${b.models.length > 1 ? 's' : ''} available</div></div>
+        <span class="chev">›</span>
+    </div>`).join('')}
+    `;
+        }
+
+        function modalModelHTML() {
+            const cat = catData.find(c => c.id === modal.catId);
+            const brand = applianceDB[modal.catId].brands.find(b => b.name === modal.brandName);
+            const types = ['All', ...applianceDB[modal.catId].types];
+            const filtered = brand.models.filter(m =>
+                (modal.typeFilter === 'All' || m.type === modal.typeFilter) &&
+                m.name.toLowerCase().includes(modal.search.toLowerCase())
+            );
+            return `
+    <div class="close" id="closeModal">✕</div>
+    ${breadcrumb(['Add appliance', cat.label, brand.name], 'brand')}
+    <h3 style="margin-top:0;">Search ${brand.name} models</h3>
+    <input class="mb-search" id="modelSearch" placeholder="e.g. WindFree AI Comfort Inverter" value="${modal.search}">
+    <div class="type-chip-row">
+        ${types.map(t => `<div class="type-chip ${modal.typeFilter === t ? 'sel' : ''}" data-type="${t}">${t}</div>`).join('')}
+    </div>
+    ${filtered.length ? filtered.map(m => `
+    <div class="list-row" data-model="${m.name}">
+        <div><div class="n">${m.name}</div><div class="d">${m.type} · ${m.variants.length} size${m.variants.length > 1 ? 's' : ''} available</div></div>
+        <span class="chev">›</span>
+    </div>`).join('') : `<div class="no-results">No models match "${modal.search}" in ${modal.typeFilter === 'All' ? 'this brand' : modal.typeFilter}.</div>`}
+    `;
+        }
+
+        function modalVariantHTML() {
+            const cat = catData.find(c => c.id === modal.catId);
+            const model = modal.modelObj;
+            return `
+    <div class="close" id="closeModal">✕</div>
+    ${breadcrumb(['Add appliance', cat.label, modal.brandName, model.name], 'model')}
+    <h3 style="margin-top:0;">Which size / capacity?</h3>
+    <p style="font-size:11px;color:#8A8371;margin:0 0 10px;">Specs below come from Joule AI's reference database — including DOE/PELP label figures where available.</p>
+    ${model.variants.map((v, i) => `
+    <div class="variant-row" data-variant-idx="${i}">
+        <div class="top"><span class="n">${v.label}</span><span class="watts">${v.watts} W</span></div>
+        <div class="spec-pills">        
+            <span class="spec-pill ${v.inverter ? 'inv' : 'reg'}">${v.inverter ? 'Inverter' : 'Non-inverter'}</span>
+            ${v.doe ? `<span class="spec-pill doe">DOE/PELP: ${v.kwhMonth} kWh/mo</span>` : `<span class="spec-pill reg">Est. ${v.kwhMonth} kWh/mo</span>`}
+        </div>
+    </div>`).join('')}
+    `;
+        }
+
+        function modalConfirmHTML() {
+            const cat = catData.find(c => c.id === modal.catId);
+            const v = modal.variant;
+            return `
+    <div class="close" id="closeModal">✕</div>
+    ${breadcrumb(['Add appliance', cat.label, modal.brandName], 'variant')}
+    <h3 style="margin-top:0;">Confirm details</h3>
+    <div class="confirm-summary">
+    <div class="n">${modal.brandName} ${modal.modelObj.name}</div>
+    <div class="d">${modal.modelObj.type} · ${v.label}</div>
+    <div class="confirm-specs">
+        <div>Wattage<b>${v.watts} W</b></div>
+        <div>${v.doe ? 'DOE/PELP label' : 'Reference est.'}<b>${v.kwhMonth} kWh/mo</b></div>
+        <div>Type<b>${v.inverter ? 'Inverter' : 'Standard'}</b></div>
+    </div>
+    </div>
+    <div class="field-row"><label>Hours used / day</label><input id="newHours" value="${modal.hours}"></div>
+    <button class="btn btn-primary" id="saveApplianceBtn" style="margin-top:10px;">Add appliance</button>
+    `;
+        }
+
+        function modalBulbConfirmHTML() {
+            return `
+    <div class="close" id="closeModal">✕</div>
+    ${breadcrumb(['Add appliance', 'Charging & Lighting'], 'category')}
+    <h3 style="margin-top:0;">Charging & Lighting cluster</h3>
+    <p style="font-size:11.5px;color:#8A8371;margin:0 0 10px;">Small, low-usage devices (bulbs, fans, chargers) are grouped into one base-load cluster instead of requiring exact wattage per item.</p>
+    <div class="field-row"><label>Hours used / day</label><input id="newHours" value="${modal.hours}"></div>
+    <button class="btn btn-primary" id="saveApplianceBtn" style="margin-top:10px;">Add appliance</button>
+    `;
+        }
+
+        function wireModalSheet() {
+            const closeBtn = document.getElementById('closeModal');
+            if (closeBtn) closeBtn.onclick = closeModal;
+
+            const back = document.querySelector('[data-back]');
+            if (back) back.onclick = () => { modal.step = back.dataset.back; renderModalSheet(); };
+
+            document.querySelectorAll('.cat-chip').forEach(chip => {
+                chip.onclick = () => {
+                    modal.catId = chip.dataset.cat;
+                    if (modal.catId === 'bulb') { modal.step = 'bulbConfirm'; }
+                    else { modal.step = 'brand'; }
+                    renderModalSheet();
+                };
+            });
+
+            document.querySelectorAll('[data-brand]').forEach(row => {
+                row.onclick = () => {
+                    modal.brandName = row.dataset.brand;
+                    modal.search = '';
+                    modal.typeFilter = 'All';
+                    modal.step = 'model';
+                    renderModalSheet();
+                };
+            });
+
+            const searchInput = document.getElementById('modelSearch');
+            if (searchInput) {
+                searchInput.oninput = (e) => {
+                    modal.search = e.target.value; renderModalSheet();
+                    const el = document.getElementById('modelSearch'); if (el) { el.focus(); el.selectionStart = el.selectionEnd = el.value.length; }
+                };
+            }
+            document.querySelectorAll('[data-type]').forEach(chip => {
+                chip.onclick = () => { modal.typeFilter = chip.dataset.type; renderModalSheet(); };
+            });
+            document.querySelectorAll('[data-model]').forEach(row => {
+                row.onclick = () => {
+                    const brand = applianceDB[modal.catId].brands.find(b => b.name === modal.brandName);
+                    modal.modelObj = brand.models.find(m => m.name === row.dataset.model);
+                    modal.step = 'variant';
+                    renderModalSheet();
+                };
+            });
+            document.querySelectorAll('[data-variant-idx]').forEach(row => {
+                row.onclick = () => {
+                    modal.variant = modal.modelObj.variants[parseInt(row.dataset.variantIdx)];
+                    modal.step = 'confirm';
+                    renderModalSheet();
+                };
+            });
+
+            const hoursInput = document.getElementById('newHours');
+            if (hoursInput) hoursInput.oninput = (e) => { modal.hours = parseFloat(e.target.value) || 0; };
+
+            const saveBtn = document.getElementById('saveApplianceBtn');
+            if (saveBtn) saveBtn.onclick = () => {
+                const hours = modal.hours || 4;
+                if (modal.step === 'bulbConfirm') {
+                    const estKwh = Math.round(hours * 30 * 0.05);
+                    state.appliances.push({ name: 'Charging & Lighting cluster', icon: 'bulb', hours, kwh: estKwh, cost: Math.round(estKwh * 11), hot: false, inverter: false });
+                    closeModal();
+                    renderApplianceList(); updateHome(); updateCalibrationText(); updateInsights();
+                    showToast('Charging & Lighting cluster added');
+                    return;
+                }
+                const v = modal.variant;
+                const baseline = modal.catId === 'ac' ? 6 : modal.catId === 'fridge' ? 24 : modal.catId === 'wash' ? 1 : modal.catId === 'tv' ? 5 : modal.catId === 'water' ? 0.5 : 4;
+                const scaledKwh = Math.round(v.kwhMonth * (hours / baseline));
+                const cost = Math.round(scaledKwh * 11);
+                state.appliances.push({
+                    name: `${modal.brandName} ${modal.modelObj.name} (${v.label})`,
+                    icon: modal.catId, hours, kwh: scaledKwh, cost, hot: cost > 800, inverter: v.inverter
+                });
+                closeModal();
+                renderApplianceList(); updateHome(); updateCalibrationText(); updateInsights();
+                showToast(`${modal.brandName} ${modal.modelObj.name} added`);
+            };
+        }
+
+        // ---------------- Event wiring ----------------
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+        });
+
+        document.querySelectorAll('[data-goto]').forEach(b => {
+            b.addEventListener('click', () => switchTab(b.dataset.goto));
+        });
+
+        document.getElementById('uploadBillBtn').addEventListener('click', () => {
+            document.getElementById('billFileInput').click();
+        });
+        document.getElementById('billFileInput').addEventListener('change', (e) => {
+            const file = e.target.files && e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = () => startScan(reader.result);
+            reader.readAsDataURL(file);
+            e.target.value = '';
+        });
+        document.getElementById('sampleBillBtn').addEventListener('click', () => {
+            startScan(generateSampleBillDataUrl());
+        });
+        document.getElementById('rescanBtn').addEventListener('click', () => {
+            state.scanStage = 0;
+            const img = document.getElementById('scanPreviewImg');
+            img.src = '';
+            img.style.opacity = '1';
+            img.style.filter = 'brightness(0.92) saturate(1.02)';
+            showScanView('idle');
+        });
+        document.getElementById('confirmScanBtn').addEventListener('click', () => {
+            const kwh = parseFloat(document.getElementById('fieldKwh').value) || 0;
+            const generation = parseFloat(document.getElementById('fieldGeneration').value) || 0;
+            const transmission = parseFloat(document.getElementById('fieldTransmission').value) || 0;
+            const systemLoss = parseFloat(document.getElementById('fieldSystemLoss').value) || 0;
+            const otherCharges = parseFloat(document.getElementById('fieldOther').value) || 0;
+            const amountDue = parseFloat(document.getElementById('fieldAmountDue').value) || 0;
+            state.billHistory.push({ kwh, generation, transmission, systemLoss, otherCharges, amountDue });
+            state.selectedMonth = state.billHistory.length - 1;
+            ['fieldKwh', 'fieldGeneration', 'fieldTransmission', 'fieldSystemLoss', 'fieldOther', 'fieldAmountDue'].forEach(id => document.getElementById(id).value = '');
+            state.scanStage = 0;
+            const img = document.getElementById('scanPreviewImg');
+            img.src = '';
+            img.style.opacity = '1';
+            img.style.filter = 'brightness(0.92) saturate(1.02)';
+            showScanView('idle');
+            switchTab('home');
+            updateHome();
+            updatePredict();
+            updateAppliancesPanel();
+            updateInsights();
+            showToast('Bill confirmed — dashboard updated');
+        });
+
+        document.getElementById('addApplianceBtn').addEventListener('click', openAddApplianceModal);
+
+        function toggleLifeline() {
+            state.lifeline = !state.lifeline;
+            updatePredict();
+            updateHome();
+        }
+        document.getElementById('lifelineToggle').addEventListener('click', toggleLifeline);
+        document.getElementById('lifelineToggle2').addEventListener('click', toggleLifeline);
+
+        document.getElementById('kwhSlider').addEventListener('input', (e) => {
+            state.sliderKwh = parseInt(e.target.value);
+            updateLifelineSlider();
+        });
+
+        document.querySelectorAll('[data-setting]').forEach(row => {
+            row.addEventListener('click', () => showSettingsView(row.dataset.setting));
+        });
+        document.querySelectorAll('[data-settings-back]').forEach(b => {
+            b.addEventListener('click', () => showSettingsView('main'));
+        });
+        document.querySelectorAll('[data-notif]').forEach(sw => {
+            sw.classList.toggle('on', state.notifPrefs[sw.dataset.notif]);
+            sw.addEventListener('click', () => {
+                const k = sw.dataset.notif;
+                state.notifPrefs[k] = !state.notifPrefs[k];
+                sw.classList.toggle('on', state.notifPrefs[k]);
+            });
+        });
+
+        document.getElementById('profileNameInput').addEventListener('input', (e) => {
+            state.profileName = e.target.value.trim();
+            updateHome();
+        });
+
+        document.getElementById('chatFab').addEventListener('click', openChat);
+        document.getElementById('closeChat').addEventListener('click', closeChat);
+        document.getElementById('chatSendBtn').addEventListener('click', () => {
+            const input = document.getElementById('chatInput');
+            sendChatMessage(input.value);
+            input.value = '';
+        });
+        document.getElementById('chatInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const input = e.target;
+                sendChatMessage(input.value);
+                input.value = '';
+            }
+        });
+
+        // ---------------- Init (everything starts blank/zero) ----------------
+        updateHome();
+        updateAppliancesPanel();
+        updatePredict();
+        updateInsights();
+        updateSettingsProfile();
+    </script>
+</body>
+
+</html>
