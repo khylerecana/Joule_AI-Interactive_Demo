@@ -1814,6 +1814,624 @@ input[type=range] {
     font-weight: 500;
 }
 
+.howitworks-page {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 24px;
+    background: radial-gradient(circle at 15% 8%, rgba(255, 54, 54, 0.32), transparent 38%),
+        radial-gradient(circle at 85% 88%, rgba(255, 228, 54, 0.20), transparent 36%),
+        radial-gradient(circle at 90% 5%, rgba(255, 228, 54, 0.14), transparent 30%),
+        linear-gradient(180deg, #120A10 0%, #1C0F16 100%);
+    color: #F4F1E8;
+    z-index: 50;
+    overflow-y: auto;
+}
+
+.howitworks-page.hidden {
+    display: none;
+}
+
+.hiw-back {
+    position: absolute;
+    top: 22px;
+    left: 22px;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px solid rgba(244, 241, 232, 0.2);
+    background: rgba(244, 241, 232, 0.05);
+    color: #F4F1E8;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.hiw-inner {
+    max-width: 560px;
+    width: 100%;
+    text-align: center;
+}
+
+.hiw-eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin: 0 0 10px;
+}
+
+.hiw-inner h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(1.5rem, 4vw, 2.1rem);
+    line-height: 1.15;
+    margin: 0 0 24px;
+    letter-spacing: -0.02em;
+}
+
+.hiw-inner h2 span {
+    color: var(--gold);
+}
+
+.hiw-steps-track {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+}
+
+.hiw-step-dot {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10.5px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: rgba(244, 241, 232, 0.4);
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(244, 241, 232, 0.14);
+    transition: color 0.25s ease, border-color 0.25s ease;
+}
+
+.hiw-step-dot span {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: rgba(244, 241, 232, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8.5px;
+}
+
+.hiw-step-dot.active {
+    color: #F4F1E8;
+    border-color: var(--gold);
+}
+
+.hiw-step-dot.active span {
+    background: var(--gold);
+    color: var(--ink);
+}
+
+.hiw-step-dot.done {
+    color: rgba(244, 241, 232, 0.75);
+}
+
+.hiw-step-dot.done span {
+    background: rgba(255, 228, 54, 0.35);
+}
+
+.hiw-sim-frame {
+    position: relative;
+    border: 1px solid rgba(244, 241, 232, 0.14);
+    border-radius: 18px;
+    background: rgba(244, 241, 232, 0.03);
+    min-height: 300px;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.hiw-scene {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 18px 16px;
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+    transition: opacity 0.45s ease, transform 0.45s ease;
+}
+
+.hiw-scene.active {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.hiw-scene-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin: 0 0 2px;
+}
+
+#sceneScan svg {
+    width: 100%;
+    max-width: 380px;
+    height: auto;
+}
+
+.hiw-sim-frame [data-step],
+.hiw-sim-frame [data-active] {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.hiw-sim-frame [data-step].show,
+.hiw-sim-frame [data-active].show {
+    opacity: 1;
+}
+
+.hiw-anchor.show {
+    animation: hiwPulse 0.9s ease;
+}
+
+@keyframes hiwPulse {
+    0% {
+        opacity: 0;
+        transform: scaleX(0.6);
+    }
+
+    60% {
+        opacity: 1;
+        transform: scaleX(1.05);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scaleX(1);
+    }
+}
+
+#hiwScanLine {
+    transform-box: fill-box;
+    transform-origin: top;
+}
+
+#hiwScanLine.show {
+    animation: hiwScan 1.3s ease-in-out;
+}
+
+@keyframes hiwScan {
+    0% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    90% {
+        transform: translateY(120px);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(120px);
+        opacity: 0;
+    }
+}
+
+.hiw-pii {
+    transition: opacity 0.6s ease;
+}
+
+.hiw-pii.discarded {
+    opacity: 0.15;
+}
+
+/* Confirm scene */
+.hiw-confirm-card {
+    width: 100%;
+    max-width: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.hiw-confirm-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(244, 241, 232, 0.05);
+    border: 1px solid rgba(244, 241, 232, 0.12);
+    border-radius: 10px;
+    padding: 9px 12px;
+    opacity: 0;
+    font-size: 12.5px;
+}
+
+.hiw-scene.active .hiw-confirm-row {
+    animation: hiwRowIn 0.5s ease both;
+    animation-delay: calc(var(--d) * 0.22s + 0.1s);
+}
+
+@keyframes hiwRowIn {
+    from {
+        opacity: 0;
+        transform: translateX(14px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.hiw-confirm-row .k {
+    color: rgba(244, 241, 232, 0.6);
+}
+
+.hiw-confirm-row .v {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+}
+
+.hiw-confirm-row .pencil {
+    width: 13px;
+    height: 13px;
+    opacity: 0.8;
+}
+
+.hiw-save-btn {
+    margin-top: 4px;
+    align-self: center;
+    border: none;
+    border-radius: 999px;
+    padding: 9px 22px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 12.5px;
+    color: var(--ink);
+    background: linear-gradient(135deg, var(--gold), var(--gold-deep));
+    opacity: 0;
+}
+
+.hiw-scene.active .hiw-save-btn {
+    animation: hiwPop 0.4s ease both;
+    animation-delay: calc(var(--d) * 0.22s + 0.25s);
+}
+
+@keyframes hiwPop {
+    from {
+        opacity: 0;
+        transform: scale(0.7);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Appliances scene */
+.hiw-appliance-list {
+    width: 100%;
+    max-width: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.hiw-appliance-chip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(244, 241, 232, 0.05);
+    border: 1px solid rgba(244, 241, 232, 0.12);
+    border-radius: 12px;
+    padding: 8px 12px;
+    opacity: 0;
+}
+
+.hiw-scene.active .hiw-appliance-chip {
+    animation: hiwRowIn 0.5s ease both;
+    animation-delay: calc(var(--d) * 0.32s);
+}
+
+.hiw-appliance-chip .ic {
+    width: 28px;
+    height: 28px;
+    border-radius: 9px;
+    flex-shrink: 0;
+    background: rgba(255, 228, 54, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: var(--gold);
+}
+
+.hiw-appliance-chip .t {
+    flex: 1;
+    text-align: left;
+}
+
+.hiw-appliance-chip .t b {
+    display: block;
+    font-size: 12.5px;
+}
+
+.hiw-appliance-chip .t small {
+    font-size: 10.5px;
+    color: rgba(244, 241, 232, 0.55);
+}
+
+.hiw-appliance-chip .chk {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--gold);
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    opacity: 0;
+    transform: scale(0.5);
+}
+
+.hiw-scene.active .hiw-appliance-chip .chk {
+    animation: hiwPop 0.3s ease both;
+    animation-delay: calc(var(--d) * 0.32s + 0.35s);
+}
+
+.hiw-appliance-total {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: rgba(244, 241, 232, 0.65);
+    opacity: 0;
+}
+
+.hiw-scene.active .hiw-appliance-total {
+    animation: hiwFadeUp 0.4s ease both;
+    animation-delay: calc(var(--d) * 0.32s);
+}
+
+@keyframes hiwFadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* AI scene */
+.hiw-ai-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    max-width: 360px;
+    justify-content: center;
+}
+
+.hiw-ai-node {
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background: rgba(255, 54, 54, 0.12);
+    border: 1px solid var(--gold-deep);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    gap: 4px;
+    text-align: center;
+}
+
+.hiw-gear {
+    font-size: 20px;
+}
+
+.hiw-scene.active .hiw-gear {
+    animation: hiwSpin 2.2s linear infinite;
+}
+
+@keyframes hiwSpin {
+    from {
+        transform: rotate(0);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.hiw-chat-bubble {
+    flex: 1;
+    max-width: 220px;
+    text-align: left;
+    background: rgba(244, 241, 232, 0.06);
+    border: 1px solid rgba(244, 241, 232, 0.14);
+    border-radius: 14px 14px 14px 4px;
+    padding: 10px 12px;
+}
+
+.hiw-chat-name {
+    font-size: 9.5px;
+    color: var(--gold);
+    margin: 0 0 6px;
+    font-family: 'IBM Plex Mono', monospace;
+}
+
+.hiw-chat-msg {
+    display: none;
+    font-size: 12px;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.hiw-chat-bubble.answered .hiw-chat-msg {
+    display: block;
+    animation: hiwFadeUp 0.4s ease both;
+}
+
+.hiw-chat-bubble.answered .hiw-typing {
+    display: none;
+}
+
+.hiw-typing {
+    display: flex;
+    gap: 4px;
+    padding: 4px 0;
+}
+
+.hiw-typing i {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+    animation: hiwBounce 1s infinite ease-in-out;
+}
+
+.hiw-typing i:nth-child(2) {
+    animation-delay: 0.15s;
+}
+
+.hiw-typing i:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+@keyframes hiwBounce {
+
+    0%,
+    60%,
+    100% {
+        transform: translateY(0);
+        opacity: 0.5;
+    }
+
+    30% {
+        transform: translateY(-4px);
+        opacity: 1;
+    }
+}
+
+/* Result scene */
+.hiw-result-meter {
+    text-align: center;
+}
+
+.hiw-result-meter .v {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1.7rem;
+    font-weight: 600;
+    color: var(--gold);
+}
+
+.hiw-result-meter .v small {
+    font-size: 0.75rem;
+    color: rgba(244, 241, 232, 0.6);
+    margin-left: 4px;
+}
+
+.hiw-trend-chip {
+    display: inline-block;
+    margin-top: 6px;
+    font-size: 10.5px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: #7FE0B0;
+    background: rgba(127, 224, 176, 0.12);
+    border-radius: 999px;
+    padding: 4px 10px;
+}
+
+.hiw-suggestion-tag {
+    max-width: 320px;
+    background: rgba(255, 228, 54, 0.08);
+    border: 1px solid var(--gold);
+    border-radius: 12px;
+    padding: 10px 14px;
+}
+
+.hiw-suggestion-tag .badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--gold);
+}
+
+.hiw-suggestion-tag p {
+    margin: 5px 0 0;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.hiw-explain {
+    min-height: 44px;
+    font-size: 0.93rem;
+    line-height: 1.55;
+    color: rgba(244, 241, 232, 0.85);
+    max-width: 460px;
+    margin: 0 auto 24px;
+}
+
+.hiw-cta-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.howitworks-page button.primary {
+    border: none;
+    border-radius: 999px;
+    padding: 15px 28px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--ink);
+    background: linear-gradient(135deg, var(--gold), var(--gold-deep));
+    box-shadow: 0 20px 40px rgba(255, 54, 54, 0.30);
+    cursor: pointer;
+}
+
+.howitworks-page button.primary:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
+.howitworks-page button.secondary {
+    border: 1px solid rgba(244, 241, 232, 0.25);
+    border-radius: 999px;
+    padding: 15px 24px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: #F4F1E8;
+    background: transparent;
+    cursor: pointer;
+}
+
+.howitworks-page button.secondary:hover {
+    background: rgba(244, 241, 232, 0.08);
+}
+
 /* ===================== Responsive layout ===================== */
 
 @media (min-width: 640px) {
