@@ -21,9 +21,7 @@
             <span class="landing-chip">RA 10173 · Privacy by design</span>
         </div>
         <div class="landing-mark">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#1A120D" stroke-width="2.4">
-                <path d="M13 2 L4 14h6l-1 8 9-12h-6z" fill="#1A120D" />
-            </svg>
+            <img src="static/Logo.svg" alt="Joule AI logo">
         </div>
         <h1>Know your bill <span>before it arrives.</span></h1>
         <p class="sub">Joule AI reads your electricity bill, learns your appliances, and predicts what you'll owe —
@@ -32,6 +30,9 @@
             <button class="primary" id="start-demo">Start Demo</button>
             <button class="secondary" id="learn-more">How it works</button>
         </div>
+
+        <button class="tertiary" id="learn-hcem">See the cost-estimation model →</button>
+
         <div class="landing-stat-strip">
             <div>
                 <div class="v">4</div>
@@ -67,9 +68,7 @@
                         </svg>
                     </button>
                     <span class="brand-mark">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="#1A120D" stroke-width="2.4">
-                            <path d="M13 2 L4 14h6l-1 8 9-12h-6z" fill="#1A120D" />
-                        </svg>
+                        <img src="static/Logo.svg" alt="Joule AI logo">
                     </span>
                     <div class="brand-text">
                         <span class="brand-name">Joule AI</span>
@@ -797,6 +796,368 @@
                 <button class="primary" id="hiwStartBtn">Start Simulation</button>
                 <button class="secondary" id="hiwTryBtn">Try it yourself →</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Hybrid Cost-Estimation Model page -->
+    <div class="howitworks-page hidden" id="hcemPage">
+        <button class="hiw-back" id="hcemBackBtn" aria-label="Back">←</button>
+        <div class="hcem-page">
+
+            <div class="hcem-header">
+                <p class="hcem-eyebrow">Joule AI · Computation Engine</p>
+                <h1>The Hybrid Cost-Estimation Model</h1>
+                <p class="hcem-sub">A scanned Meralco bill supplies real per-kWh rates and validated readings; your
+                    logged appliances supply projected usage. The two are combined into a daily estimate that keeps
+                    recalibrating every time a new bill comes in.</p>
+            </div>
+
+            <div class="hcem-steps-track">
+                <div class="hcem-step-dot" data-dot="1"><span>1</span>OCR</div>
+                <div class="hcem-step-dot" data-dot="2"><span>2</span>Cycle</div>
+                <div class="hcem-step-dot" data-dot="3"><span>3</span>Rates</div>
+                <div class="hcem-step-dot" data-dot="4"><span>4</span>Appliances</div>
+                <div class="hcem-step-dot" data-dot="5"><span>5</span>Prediction</div>
+                <div class="hcem-step-dot" data-dot="6"><span>6</span>Bill</div>
+                <div class="hcem-step-dot" data-dot="7"><span>7</span>Calibration</div>
+            </div>
+
+            <div class="hcem-sim-frame" id="hcemSim" data-stage="0">
+
+                <!-- Scene 1: OCR & Validation -->
+                <div class="hcem-scene" data-scene="ocr" id="sceneOcr">
+                    <p class="hcem-scene-label">Stage 1 · OCR &amp; Validation</p>
+                    <svg viewBox="0 0 300 130" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="14" y="10" width="90" height="110" rx="8" fill="#F4F1E8"
+                            stroke="rgba(244,241,232,0.25)" />
+                        <rect x="26" y="26" width="64" height="6" rx="3" fill="#C9BEB3" />
+                        <rect x="26" y="40" width="46" height="6" rx="3" fill="#C9BEB3" />
+                        <rect x="26" y="58" width="64" height="6" rx="3" fill="#8A8371" />
+                        <rect x="26" y="72" width="52" height="6" rx="3" fill="#8A8371" />
+                        <rect x="26" y="86" width="56" height="6" rx="3" fill="#8A8371" />
+                        <rect x="26" y="100" width="38" height="9" rx="4" fill="#FFE436" />
+                        <rect id="hcemScanLine" x="14" y="10" width="90" height="4" fill="var(--gold)"
+                            data-active="1" />
+                    </svg>
+                    <div class="hcem-validation-card">
+                        <span>Current&nbsp;47,843</span><span class="op">−</span><span>Previous&nbsp;47,643</span>
+                        <span class="op">=</span><span>200 kWh</span>
+                    </div>
+                    <div class="hcem-valid-badge">✓ OCR Consumption Valid</div>
+                </div>
+
+                <!-- Scene 2: Billing Cycle -->
+                <div class="hcem-scene" data-scene="cycle" id="sceneCycle">
+                    <p class="hcem-scene-label">Stage 2 · Billing Cycle Length</p>
+                    <div class="hcem-date-track">
+                        <div class="hcem-date-marker" style="left:0%;">Reading<br>06 May</div>
+                        <div class="hcem-date-marker" style="left:58%;">Today<br>18 May</div>
+                        <div class="hcem-date-marker" style="left:100%; transform:translateX(-100%);">Next<br>06 Jun
+                        </div>
+                        <div class="hcem-date-bar">
+                            <div class="hcem-date-fill" id="hcemDateFill"></div>
+                        </div>
+                    </div>
+                    <div class="hcem-cycle-formulas">
+                        <div class="hcem-cycle-formula-row">
+                            <span>NextReading − CurrentReading</span>
+                            <span class="r">= 31 days</span>
+                        </div>
+                        <div class="hcem-cycle-formula-row">
+                            <span>NextReading − Today</span>
+                            <span class="r">= 19 days remaining</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scene 3: Effective Cost Components -->
+                <div class="hcem-scene" data-scene="rates" id="sceneRates">
+                    <p class="hcem-scene-label">Stage 3 · Effective Cost per Component</p>
+                    <table class="hcem-rate-table">
+                        <thead>
+                            <tr>
+                                <th>Component</th>
+                                <th style="text-align:right;">Charge</th>
+                                <th style="text-align:right;">÷ 219 kWh</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="hcem-rrow" style="--d:0">
+                                <td>Generation</td>
+                                <td class="hcem-num">1,758.84</td>
+                                <td class="hcem-rate">8.03</td>
+                            </tr>
+                            <tr class="hcem-rrow" style="--d:1">
+                                <td>Transmission</td>
+                                <td class="hcem-num">281.48</td>
+                                <td class="hcem-rate">1.29</td>
+                            </tr>
+                            <tr class="hcem-rrow" style="--d:2">
+                                <td>System Loss</td>
+                                <td class="hcem-num">159.88</td>
+                                <td class="hcem-rate">0.73</td>
+                            </tr>
+                            <tr class="hcem-rrow" style="--d:3">
+                                <td>Distribution</td>
+                                <td class="hcem-num">298.00</td>
+                                <td class="hcem-rate">1.36</td>
+                            </tr>
+                            <tr class="hcem-rrow" style="--d:4">
+                                <td>Government Taxes</td>
+                                <td class="hcem-num">262.14</td>
+                                <td class="hcem-rate">1.20</td>
+                            </tr>
+                            <tr class="hcem-rrow" style="--d:5">
+                                <td>Universal Charges</td>
+                                <td class="hcem-num">64.32</td>
+                                <td class="hcem-rate">0.29</td>
+                            </tr>
+                            <tr class="hcem-rrow" style="--d:6">
+                                <td>FIT-All / GEA-All</td>
+                                <td class="hcem-num">40.22</td>
+                                <td class="hcem-rate">0.18</td>
+                            </tr>
+                            <tr class="hcem-rrow" style="--d:7">
+                                <td>Senior Citizen / Lifeline</td>
+                                <td class="hcem-num">2.02</td>
+                                <td class="hcem-rate">0.01</td>
+                            </tr>
+                            <tr class="hcem-total-row">
+                                <td>Total Effective Rate</td>
+                                <td></td>
+                                <td class="hcem-rate">₱13.09</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Scene 4: Appliance Energy -->
+                <div class="hcem-scene" data-scene="appliances" id="hcemSceneAppliances">
+                    <p class="hcem-scene-label">Stage 4 · Appliance Energy Computation</p>
+                    <div class="hcem-formula-block">
+                        <div class="hcem-formula-line">
+                            <div class="lbl">Normal — Aircon</div>
+                            <div class="eq">1200W × 8h × 30d ÷ 1000 = <span class="r">288 kWh</span></div>
+                        </div>
+                        <div class="hcem-formula-line">
+                            <div class="lbl">Duty Cycle — Refrigerator</div>
+                            <div class="eq">150W × 24h × 0.60 × 30d ÷ 1000 = <span class="r">64.8 kWh</span></div>
+                        </div>
+                        <div class="hcem-formula-line">
+                            <div class="lbl">Charging &amp; Lighting Cluster</div>
+                            <div class="eq">180W × 8h × 30d ÷ 1000 = <span class="r">43.2 kWh</span></div>
+                        </div>
+                        <div class="hcem-formula-line total">
+                            <div class="lbl">Total Projected Monthly Consumption</div>
+                            <div class="eq">288 + 64.8 + 43.2 = <span class="r">396 kWh</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scene 5: Monthly Consumption Prediction -->
+                <div class="hcem-scene" data-scene="prediction" id="scenePrediction">
+                    <p class="hcem-scene-label">Stage 5 · Monthly Consumption Prediction</p>
+                    <div class="hcem-formula-block">
+                        <div class="hcem-formula-line">
+                            <div class="lbl">Daily Average</div>
+                            <div class="eq">126 kWh ÷ 18 elapsed days = <span class="r">7 kWh/day</span></div>
+                        </div>
+                        <div class="hcem-formula-line">
+                            <div class="lbl">Projected Consumption</div>
+                            <div class="eq">7 kWh/day × 31 billing days = <span class="r">217 kWh</span></div>
+                        </div>
+                    </div>
+                    <div class="hcem-result-chip">Projected Monthly Usage · 217 kWh</div>
+                </div>
+
+                <!-- Scene 6: Estimated Bill -->
+                <div class="hcem-scene" data-scene="bill" id="sceneBill">
+                    <p class="hcem-scene-label">Stage 6 · Estimated Bill Computation</p>
+                    <div class="hcem-equation-card">
+                        EstimatedBill = <span class="frac">Σ (ProjectedConsumption × Rate<sub>i</sub>)</span>
+                        − SeniorDiscount − LifelineDiscount<br><br>
+                        217 kWh × ₱13.09/kWh ≈ <span class="frac">₱2,840.53</span>
+                    </div>
+                    <div class="hcem-result-chip">Estimated Bill · ₱2,840.53</div>
+                </div>
+
+                <!-- Scene 7: Adaptive Calibration -->
+                <div class="hcem-scene" data-scene="calibration" id="sceneCalibration">
+                    <p class="hcem-scene-label">Stage 7 · Adaptive AI Calibration</p>
+                    <div class="hcem-compare-row">
+                        <div class="hcem-compare-bar-wrap">
+                            <div class="val">₱2,840.53</div>
+                            <div class="hcem-compare-bar predicted" id="barPredicted"></div>
+                            <div class="lbl">Predicted</div>
+                        </div>
+                        <div class="hcem-compare-bar-wrap">
+                            <div class="val">₱2,866.90</div>
+                            <div class="hcem-compare-bar actual" id="barActual"></div>
+                            <div class="lbl">Actual (next scan)</div>
+                        </div>
+                    </div>
+                    <div class="hcem-calib-stats">
+                        <div class="hcem-calib-card">
+                            <div class="l">Error</div>
+                            <div class="v">₱26.37</div>
+                        </div>
+                        <div class="hcem-calib-card">
+                            <div class="l">Correction Factor</div>
+                            <div class="v">× 1.009</div>
+                        </div>
+                        <div class="hcem-calib-card">
+                            <div class="l">Adjusted Usage</div>
+                            <div class="v">≈219 kWh</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <p class="hcem-explain" id="hcemExplain">Tap Start to walk through all seven stages, from raw OCR
+                validation to a calibrated, self-correcting bill estimate.</p>
+
+            <div class="hcem-cta-row">
+                <button class="hcem-primary" id="hcemStartBtn">Start Simulation</button>
+            </div>
+
+            <section class="hcem-section-block">
+                <h2 class="hcem-section-title">Where each computation is used in the app</h2>
+                <div class="hcem-usage-grid">
+
+                    <div class="hcem-usage-card">
+                        <div class="hcem-usage-head">
+                            <span class="hcem-usage-stage">1 · OCR &amp; Validation</span>
+                            <span class="hcem-usage-screen">Scan Screen</span>
+                        </div>
+                        <div class="hcem-usage-formula">CurrentReading − PreviousReading = ActualConsumption</div>
+                        <div class="hcem-usage-arrow">↓ rendered as ↓</div>
+                        <div class="mini-mock">
+                            <div class="mini-label">Scan Screen</div>
+                            <div class="mini-chip-row">
+                                <span class="mini-chip">219 kWh</span>
+                                <span class="mini-chip">₱2,866.90</span>
+                                <span class="mini-chip ok">✓ Validated</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="hcem-usage-card">
+                        <div class="hcem-usage-head">
+                            <span class="hcem-usage-stage">2 · Billing Cycle</span>
+                            <span class="hcem-usage-screen">Dashboard · Prediction</span>
+                        </div>
+                        <div class="hcem-usage-formula">NextReading − Today = RemainingDays</div>
+                        <div class="hcem-usage-arrow">↓ rendered as ↓</div>
+                        <div class="mini-mock">
+                            <div class="mini-label">Home Dashboard</div>
+                            <div class="mini-progress-bar">
+                                <div class="mini-progress-fill"></div>
+                            </div>
+                            <div class="mini-sub">Day 19 of 31 · 12 days until next bill</div>
+                        </div>
+                    </div>
+
+                    <div class="hcem-usage-card">
+                        <div class="hcem-usage-head">
+                            <span class="hcem-usage-stage">3 · Effective Cost Components</span>
+                            <span class="hcem-usage-screen">Cost Estimation Engine</span>
+                        </div>
+                        <div class="hcem-usage-formula">Charge ÷ ActualConsumption = Rate<sub>i</sub></div>
+                        <div class="hcem-usage-arrow">↓ rendered as ↓</div>
+                        <div class="mini-mock-dark">
+                            <div class="mini-label">Internal — not user-facing</div>
+                            <div class="mini-engine-row">
+                                <span class="mini-engine-gear">⚙</span>
+                                <span style="font-family:'IBM Plex Mono',monospace; font-size:10.5px;">8 rates cached →
+                                    feeds Stage 6</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="hcem-usage-card">
+                        <div class="hcem-usage-head">
+                            <span class="hcem-usage-stage">4 · Appliance Energy</span>
+                            <span class="hcem-usage-screen">Devices Screen</span>
+                        </div>
+                        <div class="hcem-usage-formula">Power × Hours × Days × LoadFactor ÷ 1000</div>
+                        <div class="hcem-usage-arrow">↓ rendered as ↓</div>
+                        <div class="mini-mock">
+                            <div class="mini-label">Devices</div>
+                            <div class="mini-row"><span class="ic">❄</span><span class="nm">Aircon</span><span
+                                    class="kw">288 kWh</span></div>
+                            <div class="mini-row"><span class="ic">▢</span><span class="nm">Refrigerator</span><span
+                                    class="kw">64.8 kWh</span></div>
+                        </div>
+                    </div>
+
+                    <div class="hcem-usage-card">
+                        <div class="hcem-usage-head">
+                            <span class="hcem-usage-stage">5 · Monthly Prediction</span>
+                            <span class="hcem-usage-screen">Dashboard · Prediction</span>
+                        </div>
+                        <div class="hcem-usage-formula">DailyAverage × BillingDays = ProjectedConsumption</div>
+                        <div class="hcem-usage-arrow">↓ rendered as ↓</div>
+                        <div class="mini-mock">
+                            <div class="mini-label">Prediction Screen</div>
+                            <div class="mini-chip-row"><span class="mini-chip">217 kWh projected</span></div>
+                            <div class="mini-sub" style="margin-top:6px;">Based on 7 kWh/day average</div>
+                        </div>
+                    </div>
+
+                    <div class="hcem-usage-card">
+                        <div class="hcem-usage-head">
+                            <span class="hcem-usage-stage">6 · Estimated Bill</span>
+                            <span class="hcem-usage-screen">Prediction · Home Dashboard</span>
+                        </div>
+                        <div class="hcem-usage-formula">Σ(ProjectedConsumption × Rate<sub>i</sub>) − Discounts</div>
+                        <div class="hcem-usage-arrow">↓ rendered as ↓</div>
+                        <div class="mini-mock-dark">
+                            <div class="mini-label">Projected Bill · This Cycle</div>
+                            <div class="mini-big-figure">₱2,840.53<small>/ 217 kWh</small></div>
+                        </div>
+                    </div>
+
+                    <div class="hcem-usage-card" style="grid-column: 1 / -1;">
+                        <div class="hcem-usage-head">
+                            <span class="hcem-usage-stage">7 · Adaptive Calibration</span>
+                            <span class="hcem-usage-screen">Background process, after each confirmed scan</span>
+                        </div>
+                        <div class="hcem-usage-formula">ActualBill ÷ PredictedBill = CorrectionFactor</div>
+                        <div class="hcem-usage-arrow">↓ rendered as ↓</div>
+                        <div class="mini-mock-dark">
+                            <div class="mini-label">Toast Notification</div>
+                            <div class="mini-toast"><span class="dot"></span>New bill scanned — estimates recalibrated
+                                ×1.009 for next cycle.</div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <section class="hcem-section-block" style="border-top:none; text-align:center;">
+                <p class="hcem-eyebrow">Complete Hybrid Cost-Estimation Formula</p>
+                <div class="hcem-final-card">
+                    EstimatedBill&nbsp;=&nbsp;<span class="frac">(&nbsp;Σ&nbsp;(Power<sub>i</sub> × Hours<sub>i</sub> ×
+                        Days<sub>i</sub> ×
+                        LoadFactor<sub>i</sub>)&nbsp;/&nbsp;1000&nbsp;+&nbsp;ClusterEnergy&nbsp;)</span><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;× ComponentRates × CorrectionFactor − Discounts
+                </div>
+                <div class="hcem-legend">
+                    <div><b>Power</b><sub>i</sub> — appliance rated power (W)</div>
+                    <div><b>Hours</b><sub>i</sub> — average hours used per day</div>
+                    <div><b>Days</b><sub>i</sub> — number of usage days within the billing cycle</div>
+                    <div><b>LoadFactor</b><sub>i</sub> — duty-cycle or efficiency adjustment (refrigerators, inverter
+                        aircons)</div>
+                    <div><b>ClusterEnergy</b> — energy computed for grouped low-power devices (charging &amp; lighting)
+                    </div>
+                    <div><b>ComponentRates</b> — per-kWh rates derived from the scanned Meralco bill (Generation,
+                        Transmission, Distribution, System Loss, Taxes, Universal Charges, FIT-All, GEA-All)</div>
+                    <div><b>CorrectionFactor</b> — adaptive calibration multiplier from previous billing cycles</div>
+                    <div><b>Discounts</b> — applicable Senior Citizen and Lifeline deductions</div>
+                </div>
+            </section>
+
         </div>
     </div>
 
@@ -1900,6 +2261,111 @@
                 input.value = '';
             }
         });
+
+        // ---------------- Hybrid Cost-Estimation Model ----------------
+        var hcemSim = document.getElementById('hcemSim');
+        var hcemExplain = document.getElementById('hcemExplain');
+        var hcemStartBtn = document.getElementById('hcemStartBtn');
+        var hcemToken = 0;
+
+        function hcemSceneForStage(stage) {
+            return ['ocr', 'cycle', 'rates', 'appliances', 'prediction', 'bill', 'calibration'][stage - 1] || null;
+        }
+
+        function setHcemStage(stage) {
+            hcemSim.dataset.stage = stage;
+            var activeScene = hcemSceneForStage(stage);
+
+            document.querySelectorAll('.hcem-scene').forEach(function (sc) {
+                sc.classList.toggle('active', sc.dataset.scene === activeScene);
+            });
+
+            hcemSim.querySelectorAll('#sceneOcr [data-active]').forEach(function (el) {
+                el.classList.toggle('show', stage === 1);
+            });
+
+            document.querySelectorAll('.hcem-step-dot').forEach(function (dot) {
+                var n = parseInt(dot.dataset.dot);
+                dot.classList.toggle('active', n === stage);
+                dot.classList.toggle('done', n < stage);
+            });
+        }
+
+        function hcemResetVisuals() {
+            document.getElementById('hcemDateFill').style.width = '0%';
+            document.getElementById('barPredicted').style.height = '0px';
+            document.getElementById('barActual').style.height = '0px';
+        }
+
+        function runHcemSimulation() {
+            var token = ++hcemToken;
+            var timeline = [
+                { stage: 1, wait: 2000, text: 'Stage 1 — OCR reads the raw meter readings. Current Reading minus Previous Reading is cross-checked against the bill\u2019s stated consumption; if they match, the scan is trusted as valid before anything else runs.' },
+                { stage: 2, wait: 2000, text: 'Stage 2 — the meter reading date and next reading date define the full billing cycle length, and today\u2019s date against the next reading gives the days remaining — both feed the dashboard and prediction screen.' },
+                { stage: 3, wait: 2400, text: 'Stage 3 — every charge on the bill (Generation, Transmission, Distribution, System Loss, Taxes, Universal Charges, FIT-All, GEA-All, Senior/Lifeline) is divided by the actual kWh consumed, giving a real per-component rate instead of one flat estimate.' },
+                { stage: 4, wait: 2400, text: 'Stage 4 — logged appliances are converted to monthly kWh using three formulas: a simple Power × Hours × Days for normal appliances, the same with a duty-cycle factor for things like refrigerators, and a grouped cluster formula for small chargers and lighting.' },
+                { stage: 5, wait: 2000, text: 'Stage 5 — consumption logged so far this cycle is averaged per day, then projected across the full billing cycle to estimate this month\u2019s total usage.' },
+                { stage: 6, wait: 2200, text: 'Stage 6 — projected consumption is priced using the real component rates from Stage 3, minus any Senior Citizen or Lifeline discounts, to produce the estimated bill shown on the Prediction screen.' },
+                { stage: 7, wait: 2000, text: 'Stage 7 — when the next real bill is scanned, Joule AI compares it to what it predicted, computes a correction factor, and nudges next cycle\u2019s consumption estimate toward the truth.' }
+            ];
+
+            setHcemStage(0);
+            hcemResetVisuals();
+            hcemExplain.textContent = 'Starting simulation…';
+            hcemStartBtn.disabled = true;
+            hcemStartBtn.textContent = 'Running…';
+
+            var cursor = 0;
+            function step() {
+                if (token !== hcemToken) return;
+                if (cursor >= timeline.length) {
+                    hcemStartBtn.disabled = false;
+                    hcemStartBtn.textContent = 'Replay Simulation';
+                    return;
+                }
+                var s = timeline[cursor++];
+                setHcemStage(s.stage);
+                hcemExplain.textContent = s.text;
+
+                if (s.stage === 2) {
+                    setTimeout(function () {
+                        if (token !== hcemToken) return;
+                        document.getElementById('hcemDateFill').style.width = '58%';
+                    }, 200);
+                }
+                if (s.stage === 7) {
+                    setTimeout(function () {
+                        if (token !== hcemToken) return;
+                        document.getElementById('barPredicted').style.height = '78px';
+                        document.getElementById('barActual').style.height = '86px';
+                    }, 200);
+                }
+
+                setTimeout(step, s.wait);
+            }
+            setTimeout(step, 300);
+        }
+
+        hcemStartBtn.addEventListener('click', runHcemSimulation);
+
+        // Event listeners for HCEM navigation
+        var learnHcemBtn = document.getElementById('learn-hcem');
+        var hcemPage = document.getElementById('hcemPage');
+        var hcemBackBtn = document.getElementById('hcemBackBtn');
+
+        if (learnHcemBtn) {
+            learnHcemBtn.addEventListener('click', function () {
+                landingPage.classList.add('hidden');
+                hcemPage.classList.remove('hidden');
+            });
+        }
+
+        if (hcemBackBtn) {
+            hcemBackBtn.addEventListener('click', function () {
+                hcemPage.classList.add('hidden');
+                landingPage.classList.remove('hidden');
+            });
+        }
 
         // ---------------- Init (everything starts blank/zero) ----------------
         updateHome();
